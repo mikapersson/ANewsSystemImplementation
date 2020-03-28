@@ -1,6 +1,11 @@
 #ifndef INMEMDATABASE_H
 #define INMEMDATABASE_H
 
+#include <string>
+#include <vector>
+
+using std::string;
+
 struct Article {
   string title;
   string author;
@@ -25,7 +30,7 @@ public:
   string listArticles(string newsgroup);
   string listArticles(unsigned newsgroup);
 
-  bool createNewsGroup()
+  bool createNewsGroup();
 
 private:
   unsigned NEWSGROUP_ID;
