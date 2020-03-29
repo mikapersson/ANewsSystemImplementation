@@ -1,6 +1,11 @@
 #ifndef INMEMDATABASE_H
 #define INMEMDATABASE_H
 
+#include <string>
+#include <vector>
+
+using std::string;
+
 struct Article {
   string title;
   string author;
