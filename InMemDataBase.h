@@ -21,7 +21,7 @@ public:
   InMemDatabase();
   // en enda lång string, messagehandler måste omvandla den till bytes som går att skicka
   string listNewsGroups();
-  
+
   string listArticles(string newsgroup);
   string listArticles(unsigned newsgroup);
 
