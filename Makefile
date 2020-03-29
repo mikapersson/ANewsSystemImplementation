@@ -11,26 +11,25 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $*.d
 # if you use clang++ and wish to use libc++ instead of GNU's libstdc++.
 # -g is for debugging.
 CPPFLAGS =  -std=c++11 -I.
-CXXFLAGS =  -O2 -Wall -Wextra -pedantic-errors -Wold-style-cast 
-CXXFLAGS += -std=c++11 
+CXXFLAGS =  -O2 -Wall -Wextra -pedantic-errors -Wold-style-cast
+CXXFLAGS += -std=c++11
 CXXFLAGS += -g
 CXXFLAGS += $(DEPFLAGS)
-LDFLAGS =   -g 
+LDFLAGS =   -g
 #CPPFLAGS += -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
 
-all: libclientserver.a
-	make -C test
+# Temporary, used to test InMemDatabse during development
+tinmem: InMemDatabase.o inmemtet.o
+	./inmemtet
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
 # Doesn't seem to do any damage on other systems.
 
-libclientserver.a: connection.o server.o
-	ar rv libclientserver.a  connection.o server.o
-	ranlib libclientserver.a
+
 
 # Phony targets
 .PHONY: all clean distclean
@@ -42,8 +41,7 @@ clean:
 	rm $(SRC:.cc=.o) $(PROGS)
 
 distclean: clean
-	-rm libclientserver.a
-	-rm $(SRC:.cc=.d) 
+	-rm $(SRC:.cc=.d)
 	make -C test distclean
 
 
