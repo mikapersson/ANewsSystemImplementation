@@ -21,18 +21,18 @@ public:
   InMemDatabase();
   // en enda lång string, messagehandler måste omvandla den till bytes som går att skicka
   string listNewsGroups();
-
+  
   string listArticles(string newsgroup);
   string listArticles(unsigned newsgroup);
 
-  bool createNewsGroup()
+  bool createNewsGroup(string name);
+
+  bool deleteNewsGroup(string newsgroup);
+  bool deleteNewsGroup(unsigned newsgroup);
 
 private:
   unsigned NEWSGROUP_ID;
   std::vector<Newsgroup> newsGroups;
-
-
-
 };
 
 
