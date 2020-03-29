@@ -18,7 +18,7 @@ struct Newsgroup {
   string Name;
   unsigned NewsGroup_ID;
   unsigned Article_IDs;
-  std::vector<Article> articles;
+  std::map<unsigned, Article> articles;  //nyckel = article ID (unsigned)
 };
 
 class dbInterface{  //Interface för databaserna

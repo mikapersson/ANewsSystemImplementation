@@ -2,14 +2,13 @@
 #define INMEMDATABASE_H
 
 #include "dbInterface.h"
-#include <map>
 
 class InMemDatabase : public dbInterface{  //ska vi ärva såhär?
 public:
 
   InMemDatabase();
   // en enda lång string, messagehandler måste omvandla den till bytes som går att skicka
-  string listNewsGroups();
+  string listNewsGroups();  //är vi säkra på att det ska returneras en sträng?
 
   string listArticles(string newsgroup);
   string listArticles(unsigned newsgroup);
