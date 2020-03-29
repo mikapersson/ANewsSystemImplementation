@@ -29,7 +29,7 @@
 #include "connection.h"
 
 #include <algorithm>
-#include <arpa/inet.h> /* htons(), ntohs() */
+#include <arpa/inet.h>  /* htons(), ntohs() */
 #include <iostream>
 #include <memory>
 #include <netinet/in.h> /* sockaddr_in */
