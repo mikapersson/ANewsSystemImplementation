@@ -5,20 +5,19 @@
 #include <string>
 #include <memory>
 
-class MessageHandler {
+class MessageHandler { //message handling between client and server
 	public:
-	MessageHandler(std::shared_ptr<Connection>& c);
-	MessageHandler(Connection& c);
-	void send_code(Protocol code);
-	void send_int(int value);
-	void send_int_parameter(int param);
-	void send_string_parameter(std::string param);
-	Protocol receive_cmd();
-	int receive_int();
-	int receive_int_parameter();
-	std::string receive_string_parameter();
+	MessageHandler(std::shared_ptr<Connection>&); 
+	void send_anscode(Protocol);
+	void send_int(int);
+	void send_int_parameter(int);
+	void send_string_parameter(std::string);
+	Protocol rec_cmd();
+	int rec_int();
+	int rec_int_parameter();
+	std::string rec_string_parameter();
 private:
-	std::shared_ptr<Connection> conn; // the connection
-	unsigned char receive_byte();
-  	void send_byte(const char code);
+	std::shared_ptr<Connection> conn;  //anslutingen    
+	unsigned char rec_byte();  //mottagen byte
+  	void send_byte(const char code);  //skicka byte
 };
