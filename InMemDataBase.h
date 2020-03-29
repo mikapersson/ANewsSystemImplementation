@@ -1,26 +1,66 @@
 #ifndef INMEMDATABASE_H
 #define INMEMDATABASE_H
+#include <unordered_map>
+#include <vector>
+#include <string>
 
-#include "dbInterface.h"
+using std::string;
+using std::vector;
 
-class InMemDatabase : public dbInterface{  //ska vi ärva såhär?
+
+struct Article {
+  string title;
+  string author;
+  unsigned article_ID;
+  string text;
+};
+
+struct Newsgroup {
+  string name;
+  unsigned newsGroup_ID;
+  unsigned article_IDs;
+  std::unordered_map<unsigned,Article> articles;
+};
+
+class InMemDatabase {
 public:
 
   InMemDatabase();
-  // en enda lång string, messagehandler måste omvandla den till bytes som går att skicka
-  string listNewsGroups();  //är vi säkra på att det ska returneras en sträng?
 
-  string listArticles(string newsgroup);
-  string listArticles(unsigned newsgroup);
+  // List newsGroups
+  std::vector<Newsgroup> listNewsgroups();
 
-  bool createNewsGroup(string name);
+  // Create newsGroup, newsgroup name as parameter
+  // Should throw "ERR_NG_ALREADY_EXISTS"
+  void createNewsgroup(string name);
 
-  bool deleteNewsGroup(string newsgroup);
-  bool deleteNewsGroup(unsigned newsgroup);
+  // Delete newsgroup
+  //  should throw "ERR_NG_DOES_NOT_EXIST"
+  void deleteNewsgroup(unsigned ng_ID);
+
+  // List articles in newsgroup
+  // Should throw "ERR_NG_DOES_NOT_EXIST"
+  std::vector<Article> listArticles(unsigned ng_ID);
+
+  // create article in newsgroup
+  // should throw "ERR_NG_DOES_NOT_EXIST"
+  bool createArticle(unsigned ng_ID , string title, string author, string text);
+
+  // Delete an article in newsgroup
+  // Should throw "ERR_NG_DOES_NOT_EXIST" and "ERR_ART_DOES_NOT_EXIST"
+  bool deleteArticle(unsigned ng_ID , unsigned art_ID);
+
+  // Get an article in a newsGroup
+  // Should throw "ERR_NG_DOES_NOT_EXIST" and "ERR_ART_DOES_NOT_EXIST"
+  Article getArticle(unsigned ng_ID , unsigned art_ID);
 
 private:
   unsigned NEWSGROUP_ID;
-  std::map<int, Newsgroup> newsGroups;  
+  std::unordered_map<unsigned,Newsgroup> newsgroups;
+
+
+  // change to vector and add findartbyname and findartbyid
+  // and findNgbyname and findNgByid
 };
 
 
