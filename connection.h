@@ -64,7 +64,7 @@ class Connection {
         Connection(Connection&&);
 
       protected:
-        static constexpr int no_socket {-1};
+        static constexpr int no_socket{-1};
 
         /* The socket number that this connections communicates on */
         int my_socket {no_socket};

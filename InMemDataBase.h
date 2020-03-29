@@ -1,26 +1,10 @@
 #ifndef INMEMDATABASE_H
 #define INMEMDATABASE_H
 
-#include <string>
-#include <vector>
+#include "dbInterface.h"
+#include <map>
 
-using std::string;
-
-struct Article {
-  string title;
-  string author;
-  unsigned ID;
-  string text;
-};
-
-struct Newsgroup {
-  string Name;
-  unsigned NewsGroup_ID;
-  unsigned Article_IDs;
-  std::vector<Article> articles;
-};
-
-class InMemDatabase {
+class InMemDatabase : public dbInterface{  //ska vi ärva såhär?
 public:
 
   InMemDatabase();
@@ -37,7 +21,7 @@ public:
 
 private:
   unsigned NEWSGROUP_ID;
-  std::vector<Newsgroup> newsGroups;
+  std::map<int, Newsgroup> newsGroups;  
 };
 
 
