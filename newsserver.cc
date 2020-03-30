@@ -16,12 +16,6 @@ using std::cout;
 using std::endl;
 using std::endl;
 
-//typedef InMemInMemDatabase InMemDatabase;  //osäker på om vi ska göra såhär
-// Varför ska vi göra så?
-// tänker att jag fixar en helt virutell klass InMemDatabase
-// som InMemInMemDatabase och FileInMemDatabase får ärva
-
-
 Server init(int argc, char* argv[]);
 void listNG(InMemDatabase& db, MessageHandler& mh);
 void createNG(InMemDatabase& db, MessageHandler& mh);
