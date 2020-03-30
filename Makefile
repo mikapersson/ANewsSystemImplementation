@@ -32,17 +32,17 @@ newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 
 
 # Phony targets
-.PHONY: all clean distclean	
+.PHONY: all clean distclean
 
 SRC = $(wildcard *.cc)
 
 # Standard clean
 clean:
-	rm $(SRC:.cc=.o) $(PROGS)
+	rm -f $(SRC:.cc=.o) $(PROGS)
 
 distclean: clean
-	-rm $(SRC:.cc=.d)
-	make -C test distclean
+	-rm -f $(SRC:.cc=.d)
+
 
 
 # Include the *.d files
