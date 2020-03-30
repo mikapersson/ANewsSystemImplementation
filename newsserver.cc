@@ -106,6 +106,7 @@ void listNG(Database& db, MessageHandler& mh){
 
 void createNG(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_CREATE_NG);
+
     if(db.createNewsgroup(mh.rec_string_parameter())){
         mh.send_anscode(Protocol::ANS_ACK);
     } else {
