@@ -27,6 +27,8 @@ public:
 
   InMemDatabase();
 
+  ~InMemDatabase();
+
   // List newsGroups
   std::vector<Newsgroup> listNewsgroups();
 
