@@ -33,11 +33,12 @@ public:
   std::vector<Newsgroup> listNewsgroups();
 
   // Create newsGroup, newsgroup name as parameter
+  //returns true if creation was successful, otherwise false
   // Should throw "ERR_NG_ALREADY_EXISTS"
-  void createNewsgroup(string name);
+  bool createNewsgroup(string name);  //ändrade till bool för enklare hantering i serverklassen
 
   // Delete newsgroup
-  //  should throw "ERR_NG_DOES_NOT_EXIST"
+  //  should throw "ERR_NG_DOES_NOT_EXIST"  //vi kastar väl inget här?
   void deleteNewsgroup(unsigned ng_ID);
 
   // List articles in newsgroup

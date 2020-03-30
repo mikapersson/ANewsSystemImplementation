@@ -14,8 +14,8 @@ class MessageHandler { //message handling between client and server
 	void send_string_parameter(std::string);  //send string parameter from server to client
 	Protocol rec_cmd();  //read command from client to server
 	int rec_int();  //read int from client to server
-	int rec_int_parameter();
-	std::string rec_string_parameter();
+	int rec_int_parameter();  //read int parameter from client to server
+	std::string rec_string_parameter();  //read string parameter from client to server
 private:
 	std::shared_ptr<Connection> conn;  //anslutingen    
 	unsigned char rec_byte();  //read byte from client to server

@@ -14,17 +14,18 @@ std::vector<Newsgroup> InMemDatabase::listNewsgroups(){
   return ngs;
 }
 
-void InMemDatabase::createNewsgroup(string name){
+bool InMemDatabase::createNewsgroup(string name){
 
   for(auto& n : newsgroups){ // If there is newsgroup with that name
     if(n.second.name == name){
-      throw std::invalid_argument("ERR_NG_ALREAD_EXISTS");
+      //throw std::invalid_argument("ERR_NG_ALREAD_EXISTS");  //ta bort?
+      return false;
     }
   }
   NEWSGROUP_ID++; // To make sure that every newsgroup is unique
   Newsgroup n = {name, NEWSGROUP_ID};
   newsgroups[NEWSGROUP_ID] =n;
-
+  return true;
 }
 
 

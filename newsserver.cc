@@ -98,18 +98,31 @@ void listNG(Database& db, MessageHandler& mh){
         mh.send_int_parameter(ng.ID);
         mh.send_string_parameter(ng.name);
     }
-
 }
 
 void createNG(Database& db, MessageHandler& mh){
-
+    mh.send_anscode(Protocol::ANS_CREATE_NG);
+    if(db.createNewsgroup(mh.rec_string_parameter())){
+        mh.send_anscode(Protocol::ANS_ACK);
+    } else {
+        mh.send_anscode(Protocol::ANS_NAK);
+        mh.send_anscode(Protocol::ERR_NG_ALREADY_EXISTS);
+    }
 }
 
 void deleteNG(Database& db, MessageHandler& mh){
-
+    mh.send_anscode(Protocol::ANS_DELETE_NG);
+    if(db.deleteNewsgroup(mh.rec_int_parameter())){
+        mh.send_anscode(Protocol::ANS_ACK);
+    } else {
+        mh.send_anscode(Protocol::ANS_NAK);
+        mh.send_anscode(Protocol::ERR_NG_DOES_NOT_EXIST);
+    }
 }
 
 void listArt(Database& db, MessageHandler& mh){
+    mh.send_anscode(Protocol::ANS_LIST_ART);
+    //search map with newsgroup to determine if the input newsgroup exists
 
 }
 
