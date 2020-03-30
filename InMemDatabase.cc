@@ -1,5 +1,5 @@
 #include "InMemDatabase.h"
-
+#include <iostream>
 
 InMemDatabase::InMemDatabase() {
   NEWSGROUP_ID = 0;
@@ -12,6 +12,7 @@ std::vector<Newsgroup> InMemDatabase::listNewsgroups(){
   for(auto& n : newsgroups){
     ngs.push_back(n.second);
   }
+  std::sort(ngs.begin(),ngs.end(), [&](Newsgroup &n1, Newsgroup &n2){return n2.newsGroup_ID - n1.newsGroup_ID;});
   return ngs;
 }
 
@@ -23,7 +24,7 @@ bool InMemDatabase::createNewsgroup(string name){
     }
   }
     NEWSGROUP_ID++; // To make sure that every newsgroup is unique
-    Newsgroup n = {name, NEWSGROUP_ID};
+    Newsgroup n = {name, NEWSGROUP_ID, 0,std::unordered_map<unsigned,Article>()};
     newsgroups[NEWSGROUP_ID] =n;
     return true;
 }
@@ -54,14 +55,15 @@ vector<Article> InMemDatabase::listArticles(unsigned ng_ID){
 
 
 bool InMemDatabase::createArticle(unsigned ng_ID , string title, string author, string text){
-    Newsgroup ng;
+    Newsgroup* ng;
     try{
-        ng = newsgroups.at(ng_ID);
+        ng = &newsgroups.at(ng_ID);
     }catch(std::out_of_range e){
+        std::cout << "no ng id\n";
         return false;
     }
-    ng.article_IDs++;
-    ng.articles.insert({ng.article_IDs,Article{title,author,ng.article_IDs,text}});
+    ng->article_IDs++;
+    ng->articles.insert({ng->article_IDs,Article{title,author,ng->article_IDs,text}});
 
     return true;
 
@@ -69,8 +71,8 @@ bool InMemDatabase::createArticle(unsigned ng_ID , string title, string author, 
 // Utgår från att den går igenom
 bool InMemDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
 
-  Newsgroup ng = newsgroups.at(ng_ID);
-  ng.articles.erase(art_ID);
+  Newsgroup* ng = &newsgroups.at(ng_ID);
+  ng->articles.erase(art_ID);
   return true;
 }
 

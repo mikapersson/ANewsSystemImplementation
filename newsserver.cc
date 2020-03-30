@@ -46,19 +46,19 @@ int main(int argc, char* argv[]){
                       createNG(db, mh);
                       break;
                     case Protocol::COM_DELETE_NG :
-                      listNG(db, mh);
+                      deleteNG(db, mh);
                       break;
                     case Protocol::COM_LIST_ART :
-                      listNG(db, mh);
+                      listArt(db, mh);
                       break;
                     case Protocol::COM_CREATE_ART :
-                      listNG(db, mh);
+                      createArt(db, mh);
                       break;
                     case Protocol::COM_DELETE_ART :
-                      listNG(db, mh);
+                      deleteArt(db, mh);
                       break;
                     case Protocol::COM_GET_ART :
-                      listNG(db, mh);
+                      getArt(db, mh);
                       break;
                     default:
                       break;

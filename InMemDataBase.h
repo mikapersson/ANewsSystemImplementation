@@ -6,9 +6,7 @@
 
 class InMemDatabase : public Database {
 public:
-
   InMemDatabase();
-
   ~InMemDatabase();
 
   // List newsGroups
