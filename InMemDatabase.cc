@@ -22,10 +22,10 @@ bool InMemDatabase::createNewsgroup(string name){
       return false;
     }
   }
-  NEWSGROUP_ID++; // To make sure that every newsgroup is unique
-  Newsgroup n = {name, NEWSGROUP_ID};
-  newsgroups[NEWSGROUP_ID] =n;
-  return true;
+    NEWSGROUP_ID++; // To make sure that every newsgroup is unique
+    Newsgroup n = {name, NEWSGROUP_ID};
+    newsgroups[NEWSGROUP_ID] =n;
+    return true;
 }
 
 
