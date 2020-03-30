@@ -15,9 +15,9 @@ struct Article {
 };
 
 struct Newsgroup {
-  string Name;
-  unsigned NewsGroup_ID;
-  unsigned Article_IDs;
+  string name;
+  unsigned newsgroup_ID;
+  unsigned article_IDs;
   std::map<unsigned, Article> articles;  //nyckel = article ID (unsigned)
 };
 

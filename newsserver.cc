@@ -8,11 +8,11 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <memory>
 #include <stdexcept>
-#include <string>
 
 using std::cerr;
+using std::cout;
+using std::endl;
 using std::endl;
 
 Server init(int argc, char* argv[]);
@@ -27,7 +27,40 @@ void getArt(Database& db, MessageHandler& mh);
 
 int main(int argc, char* argv[]){
     Server server = init(argc, argv);
+    //CREATE DATABASE HERE
 
+    while(true){
+        auto conn = server.waitForActivity();
+        if(conn != nullptr){
+
+            MessageHandler mh(conn);
+            try{
+                auto received = mh.rec_cmd();
+                switch(received){
+                    case Protocol::COM_LIST_NG : listNG(db, mh);
+                    case Protocol::COM_CREATE_NG : createNG(db, mh);
+                    case Protocol::COM_DELETE_NG : listNG(db, mh);
+                    case Protocol::COM_LIST_ART : listNG(db, mh);
+                    case Protocol::COM_CREATE_ART : listNG(db, mh);
+                    case Protocol::COM_DELETE_NG : listNG(db, mh);
+                    case Protocol::COM_GET_NG : listNG(db, mh);
+                }
+                mh.send_anscode(Protocol::ANS_END);
+                if(mh.rec_cmd() != Protocol::COM_END){
+                    cout << "No end of command received, terminating connection" << endl;
+                    throw ConnectionClosedException();
+                }
+
+            } catch(ConnectionClosedException&) {
+                server.deregisterConnection();
+                cout << "Closed connection exception" << endl;    
+            }
+        } else {
+            conn = std::make_shared<Connection>();
+            server.registerConnection(conn);
+            cout << "New client connected" << endl;
+        }
+    }
 
 
     return 0;
@@ -59,6 +92,13 @@ Server init(int argc, char* argv[]){
 
 void listNG(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_LIST_NG);
+    auto ngList = db.listNewsgroups();
+    mh.send_int(ngList.size());
+    for(auto& ng : ngList){
+        mh.send_int_parameter(ng.ID);
+        mh.send_string_parameter(ng.name);
+    }
+
 }
 
 void createNG(Database& db, MessageHandler& mh){
