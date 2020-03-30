@@ -1,28 +1,10 @@
 #ifndef INMEMDATABASE_H
 #define INMEMDATABASE_H
-#include <unordered_map>
-#include <vector>
-#include <string>
-
-using std::string;
-using std::vector;
+#include "Database.h"
 
 
-struct Article {
-  string title;
-  string author;
-  unsigned article_ID;
-  string text;
-};
 
-struct Newsgroup {
-  string name;
-  unsigned newsGroup_ID;
-  unsigned article_IDs;
-  std::unordered_map<unsigned,Article> articles;
-};
-
-class InMemDatabase {
+class InMemDatabase : public Database {
 public:
 
   InMemDatabase();
@@ -45,25 +27,30 @@ public:
   // Should throw "ERR_NG_DOES_NOT_EXIST"
   std::vector<Article> listArticles(unsigned ng_ID);
 
-  // create article in newsgroup
-  // should throw "ERR_NG_DOES_NOT_EXIST"
+
+  // Create article in newsgroup ng_ID. If successfull returns true, if
+  // no newsgroup with that ID present, returns false.
   bool createArticle(unsigned ng_ID , string title, string author, string text);
 
   // Delete an article in newsgroup
-  // Should throw "ERR_NG_DOES_NOT_EXIST" and "ERR_ART_DOES_NOT_EXIST"
+  // ska ändras till void eftersom den utgår från att både newsgroupen och artiklen finns
   bool deleteArticle(unsigned ng_ID , unsigned art_ID);
 
   // Get an article in a newsGroup
   // Should throw "ERR_NG_DOES_NOT_EXIST" and "ERR_ART_DOES_NOT_EXIST"
   Article getArticle(unsigned ng_ID , unsigned art_ID);
 
+  // Kollar om newsgroup ng_ID finns
+  bool ngExists(unsigned ng_ID);
+
+  // kollar om artikeln art_ID finns i newgsgroupen ng_ID finns
+  // Använd alltid ngExisits först innan denna!!!! så man kan skilja dem
+  bool artExists(unsigned ng_ID, unsigned art_ID);
+
 private:
   unsigned NEWSGROUP_ID;
   std::unordered_map<unsigned,Newsgroup> newsgroups;
 
-
-  // change to vector and add findartbyname and findartbyid
-  // and findNgbyname and findNgByid ALTERNATIVT 'bool ngExists(unsigned ngID)'?
 };
 
 
