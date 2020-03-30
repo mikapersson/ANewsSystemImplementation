@@ -29,12 +29,14 @@ bool InMemDatabase::createNewsgroup(string name){
 }
 
 
-void InMemDatabase::deleteNewsgroup(unsigned ng_ID){
+bool InMemDatabase::deleteNewsgroup(unsigned ng_ID){
 
   if(newsgroups.count(ng_ID) == 0)
-    throw std::invalid_argument("ERR_NG_DOES_NOT_EXIST");
+    //throw std::invalid_argument("ERR_NG_DOES_NOT_EXIST");
+    return false;
 
   newsgroups.erase(ng_ID);
+  return true;
 
 
 }

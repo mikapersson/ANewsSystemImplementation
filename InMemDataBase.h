@@ -39,7 +39,7 @@ public:
 
   // Delete newsgroup
   //  should throw "ERR_NG_DOES_NOT_EXIST"  //vi kastar väl inget här?
-  void deleteNewsgroup(unsigned ng_ID);
+  bool deleteNewsgroup(unsigned ng_ID);
 
   // List articles in newsgroup
   // Should throw "ERR_NG_DOES_NOT_EXIST"
