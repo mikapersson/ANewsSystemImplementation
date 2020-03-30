@@ -105,6 +105,10 @@ Server init(int argc, char* argv[]){
                 cerr << "Wrong format for port number. " << e.what() << endl;
                 exit(2);
         }
+        if( port > 65535 || port <= 0){
+          std::cout << "Invalid port number. Valid values: 0 < port < 65535. \n";
+          exit(4);
+        }
 
         Server server(port);
         if (!server.isReady()) {
