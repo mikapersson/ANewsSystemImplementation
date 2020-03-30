@@ -117,7 +117,9 @@ Server init(int argc, char* argv[]){
 void listNG(InMemDatabase& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_LIST_NG);
     auto ngList = db.listNewsgroups();
-    mh.send_int(ngList.size());
+    mh.send_int_parameter(ngList.size());
+    if(ngList.size() == 0)
+      return;
     for(auto& ng : ngList){
         mh.send_int_parameter(ng.newsGroup_ID);
         mh.send_string_parameter(ng.name);
