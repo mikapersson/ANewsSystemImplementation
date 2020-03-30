@@ -32,7 +32,7 @@ newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 
 
 # Phony targets
-.PHONY: all clean distclean
+.PHONY: all clean distclean	
 
 SRC = $(wildcard *.cc)
 
