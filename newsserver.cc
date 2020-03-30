@@ -34,10 +34,9 @@ void getArt(InMemDatabase& db, MessageHandler& mh);
 
 int main(int argc, char* argv[]){
     Server server = init(argc, argv);
-    //CREATE InMemDatabase HERE
 
     InMemDatabase db;
-
+    std::cout << "Server started successfully, waiting for connection..." <<std::endl;
     while(true){
         auto conn = server.waitForActivity();
         if(conn != nullptr){

@@ -24,7 +24,7 @@ LDFLAGS =   -g
 
 # Temporary, used to test InMemDatabse during development
 
-memserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o
+newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
 # Doesn't seem to do any damage on other systems.

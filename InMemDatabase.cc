@@ -2,9 +2,10 @@
 
 
 InMemDatabase::InMemDatabase() {
-
   NEWSGROUP_ID = 0;
 }
+
+InMemDatabase::~InMemDatabase(){}
 
 std::vector<Newsgroup> InMemDatabase::listNewsgroups(){
   std::vector<Newsgroup> ngs;
