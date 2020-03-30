@@ -181,5 +181,20 @@ void getArt(Database& db, MessageHandler& mh){
     auto grID = mh.rec_int_parameter();
     auto artID = mh.rec_int_parameter();
 
-    if
+    if(ANVÄND db.findByID() HÄR){  
+        if(ANVÄND db.artExists(artID) HÄR){
+            mh.send_anscode(Protocol::ANS_ACK);
+            auto article = db.getArticle(grID, artID);
+            mh.send_string_parameter(article.title);
+            mh.send_string_parameter(article.author);
+            mh.send_string_parameter(article.text);
+
+        } else {
+            mh.send_anscode(Protocol::ANS_NAK);
+            mh.send_anscode(Protocol::ERR_ART_DOES_NOT_EXIST);
+        }
+    } else {
+        mh.send_anscode(Protocol::ANS_NAK);
+        mh.send_anscode(Protocol::ERR_NG_DOES_NOT_EXIST);
+    }
 }

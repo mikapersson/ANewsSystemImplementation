@@ -63,7 +63,7 @@ private:
 
 
   // change to vector and add findartbyname and findartbyid
-  // and findNgbyname and findNgByid
+  // and findNgbyname and findNgByid ALTERNATIVT 'bool ngExists(unsigned ngID)'?
 };
 
 
