@@ -71,7 +71,7 @@ int main(int argc, char* argv[]){
 
             } catch(ConnectionClosedException&) {
                 server.deregisterConnection(conn);
-                cout << "Closed connection exception" << endl;
+                cout << "A client disconnected!" << endl;
             }
         } else {
             conn = std::make_shared<Connection>();

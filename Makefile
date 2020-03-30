@@ -21,14 +21,14 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
+PROGS = newsserver newsclient
 
-# Temporary, used to test InMemDatabse during development
+all: $(PROGS)
 
+
+#Targets 
 newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o
-
-# Create the library; ranlib is for Darwin (OS X) and maybe other systems.
-# Doesn't seem to do any damage on other systems.
-
+newsclient: connection.o MessageHandler.o newsclient.o
 
 
 # Phony targets
