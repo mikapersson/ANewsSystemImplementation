@@ -46,9 +46,11 @@ vector<Article> InMemDatabase::listArticles(unsigned ng_ID){
   vector<Article> articles;
   //std::for_each(ng.articles.begin(),ng.articles.end(),[]( std::pair<unsigned,Article> &p){articles.push_back(p.second);});
 
-  for(auto& a : ng.articles)
+  for(auto& a : ng.articles){
     articles.push_back(a.second);
+  }
 
+  std::sort(articles.begin(),articles.end(), [&](Article &a1, Article &a2){return a2.article_ID - a1.article_ID;});
   return articles;
 }
 
