@@ -12,8 +12,10 @@
 #include <vector>
 #include <sstream>
 
-std::string validCommands[] = {"read" , "list" , "delete", "create", "exit" , "help"};
+std::string validCommands[] = {"read" , "list" , "delete", "create", "exit" , "help","clear"};
 std::string cts(char array[]){return std::string(array);}
+const unsigned INPUT_BUFFER = 2048;
+
 
 Connection init(int argc, char *argv[]){
 
@@ -43,6 +45,16 @@ Connection init(int argc, char *argv[]){
   }
 
   return c;
+
+}
+void clearScreen(){for(unsigned i=0; i != 50; i++)std::cout << "\n";}
+
+void printWelcomeMessage(){
+  clearScreen();
+  std::cout << "Welcome to NewsClient!\n" << "All is set and you are connected"
+            << " to the newsserver." << "\nType \"help\" to list available commands. "
+            << std::endl;
+
 
 }
 
@@ -138,7 +150,7 @@ void read(MessageHandler& mh, std::string parameters){
     // Check if valid numbers i.e, not negative
   }catch(std::exception& e){
     std::cout <<
-      "read [NG_ID] [ART_ID]\t- to read article ART_ID in newsgroup NG_ID." <<std::endl;
+      "read NG_ID ART_ID\t- to read article ART_ID in newsgroup NG_ID." <<std::endl;
     return;
   }
   mh.send_anscode(Protocol::COM_GET_ART);
@@ -179,52 +191,79 @@ void list(MessageHandler &mh, std::string parameters){
     return;
   }
 //  if(!parameters.find(" "))
-  {
+
     try{
       int ng_ID = std::stoi(parameters);
-
       listArticles(mh, ng_ID);
       return;
-    }catch(std::exception& e){
+    }catch(std::exception& e){}
 
-
-    }
-  }
   std::cout <<
-    "list\t\t- to display newsgroups\nlist [index]\t- to list articles in a specific newsgroup."
+    "list\t\t- to display newsgroups\nlist ng_ID\t- to list articles in a specific newsgroup."
     << std::endl;
   return;
 }
 void printHelpMessage(){
   std::cout << "Available commands: \n"
             << "list\t\t\t\t\t- list newsgroups.\n"
-            << "list [ng_ID]\t\t\t\t- list articles in a specific newsgroup.\n"
-            << "read [ng_ID] [art_ID]\t\t\t- read an article.\n"
+            << "list ng_ID\t\t\t\t- list articles in a specific newsgroup.\n"
+            << "read ng_ID art_ID\t\t\t- read an article.\n"
             << "create \"title\"\t\t\t\t- create a newsgroup.\n"
-            << "create [ng_ID] \"title\" \"author\" \"text\"\t- create an article.\n"
-            << "delete [ng_ID]\t\t\t\t- delete a newsgroup.\n"
-            << "delete [ng_ID] [art_ID]\t\t\t- delete an article.\n"
-            //<< "Where brackets indicate a number and quotation marks indicate a string.\n"
-            // Behövs raden ovanför??
+            << "create ng_ID \"title\" \"author\" \"text\"\t- create an article.\n"
+            << "delete ng_ID\t\t\t\t- delete a newsgroup.\n"
+            << "delete ng_ID art_ID\t\t\t- delete an article.\n"
+            << "clear\t\t\t\t\t- clear screen.\n"
+            << "exit\t\t\t\t\t- exit NewsClient."
             << std::endl;
 }
 void createNg(MessageHandler& mh, std::string parameters){
+  unsigned q = 0;
+  for(char& c: parameters)
+    if(c == '"')
+      q++;
+  if(q != 2){
+    std::cout << "create \"title\"\t\t- create Newsgroup." << std::endl;
+    return;
+  }
+  size_t p1,p2;
+  p1 = parameters.find('"',0);
+  p2 = parameters.find('"',p1+1);
+  std::string title = parameters.substr(p1+1,p2-p1 - 1);
 
-}
-void createArt(MessageHandler &mh, std::string parameters, int ng_ID){
-  std::string art[3];
-  // Inte klar med det här. Bheöver bättre sätt att hitta title, author och text
-  for(int i=0; i!= 3; i++){ // extract the title, author and text from paramters
-    art[i] = parameters.substr(0,parameters.find_first_of(" "));
-    parameters = parameters.substr(parameters.find_first_of(" ") + 1);
+  mh.send_anscode(Protocol::COM_CREATE_NG);
+  mh.send_string_parameter(title);
+  mh.send_anscode(Protocol::COM_END);
+
+  mh.rec_cmd(); // Should be ANS_CREATE_NG
+  Protocol r = mh.rec_cmd();
+  if(r == Protocol::ANS_NAK){
+    mh.rec_cmd(); // should be ERR_NG_ALREADY_EXISTS
+    std::cout << "A newsgroup named " << title << " already exists." <<std::endl;
+  }else{ // ANS_ACK
+    std::cout << "Newsgroup created." << std::endl;
   }
 
-  for(auto& s: art) // Check so all arguments are valid strings
-    if(s == ""){
-      std::cout << "create [ng_ID] \"title\" \"author\" \"text\"\t- create article."
-                << std::endl;
-      return;
-    }
+  mh.rec_cmd(); // ANS_END
+}
+void createArt(MessageHandler &mh, std::string parameters, int ng_ID){
+  unsigned q = 0;
+  for(char& c: parameters)
+    if(c == '"')
+      q++; // Make sure the argument contains 3 sentences
+
+  if(q != 6){
+    std::cout << "create ng_ID \"title\" \"author\" \"text\"\t- create article."
+              << std::endl;
+    return;
+  }
+  size_t p1,p2 = -1;
+  std::string art[3];
+
+  for(int i=0; i!=3;i++){
+    p1 = parameters.find('"',p2+1);
+    p2 = parameters.find('"',p1+1);
+    art[i] = parameters.substr(p1+1,p2-p1 -1);
+  }
 
   mh.send_anscode(Protocol::COM_CREATE_ART);
   mh.send_int_parameter(ng_ID);
@@ -258,27 +297,86 @@ void create(MessageHandler &mh, std::string parameters){
   }
 }
 
+void deleteArt(MessageHandler& mh, int ng_ID, int art_ID){
+  mh.send_anscode(Protocol::COM_DELETE_ART);
+  mh.send_int_parameter(ng_ID);
+  mh.send_int_parameter(art_ID);
+  mh.send_anscode(Protocol::COM_END);
+
+  mh.rec_cmd(); // Should be ANS_DELETE_ART
+  Protocol r = mh.rec_cmd();
+  if(r == Protocol::ANS_NAK){
+    Protocol r = mh.rec_cmd();
+    if(r == Protocol::ERR_NG_DOES_NOT_EXIST){
+      std::cout << "Newsgroup does not exist." <<std::endl;
+    }else{ // ERR_ART_DOES_NOT_EXIST
+      std::cout << "Article does not exist." <<std::endl;
+    }
+  }else{ // ANS_ACK
+    std::cout << "Article deleted." << std::endl;
+  }
+
+  mh.rec_cmd(); // should be ANS_END
+}
+
+void deleteNG(MessageHandler& mh, int ng_ID){
+  mh.send_anscode(Protocol::COM_DELETE_NG);
+  mh.send_int_parameter(ng_ID);
+  mh.send_anscode(Protocol::COM_END);
+
+  mh.rec_cmd(); // SHould be ANS_DELETE_NG
+
+  Protocol r = mh.rec_cmd();
+  if(r == Protocol::ANS_NAK){
+    mh.rec_cmd(); // Should be ERR_NG_DOES_NOT_EXIST
+    std::cout << "Newsgroup does not exist." <<std::endl;
+  }else{ // ANS_ACK
+    std::cout << "Newsgroup deleted." << std::endl;
+  }
+  mh.rec_cmd(); // should be ANS_END
+}
+
+void deleteC(MessageHandler &mh, std::string parameters){
+  while(parameters[0] == ' ')
+    parameters.substr(1,std::string::npos);
+  int ng_ID = -1, art_ID = -1;
+  try{
+    ng_ID = getIntParam(parameters,1); // if unable to find int parameter
+    art_ID = getIntParam(parameters,2); // getIntParam throws invalid_argument
+    deleteArt(mh, ng_ID, art_ID);
+  }catch(std::invalid_argument& e){
+    if(ng_ID == -1){
+      std::cout << "delete ng_ID\t\t\t- delete newsgroup." << std::endl
+                << "delete ng_ID art_ID\t\t- delete article in newsgroup." <<std::endl;
+      return;
+    }
+    deleteNG(mh,ng_ID);
+  }
+
+}
+
 
 int main(int argc, char *argv[]){
 
   Connection conn = init(argc, argv);
-  char cinput[256];
+  char cinput[INPUT_BUFFER];
   MessageHandler mh(conn);
 
   bool running = true;
   std::string input;
   std::string command;
   std::string parameters;
+  printWelcomeMessage();
   while(running){
     std::cout << ">>>"; // prompt
-    std::cin.getline(cinput,256);
+    std::cin.getline(cinput,INPUT_BUFFER);
     input = cts(cinput);
     command = input.substr(0, input.find_first_of(' ',0));
     parameters = input.substr(input.find_first_of(' ',0) + 1,std::string::npos );
     if(parameters == command)
       parameters = "";
     if(!validCommand(command)){
-      std::cout << "Invalid command, type \"help\" for info. " <<std::endl;
+      std::cout << "Invalid command, type \"help\" for available instructions. " <<std::endl;
       continue;
     }
     //std::cout << command << ":" << parameters << std::endl; // only while writing program
@@ -289,7 +387,7 @@ int main(int argc, char *argv[]){
       list(mh, parameters);
     }
     if(command == "delete"){
-
+      deleteC(mh,parameters);
     }
     if(command == "create"){
       create(mh,parameters);
@@ -297,7 +395,8 @@ int main(int argc, char *argv[]){
     if(command == "help"){
       printHelpMessage();
     }
-
+    if(command == "clear")
+      clearScreen();
     if(command == "exit"){
       running = false;
     }
