@@ -3,18 +3,21 @@
 /*Create MessageHandler*/
 MessageHandler::MessageHandler(std::shared_ptr<Connection> &c) : conn(c){}
 
+
+MessageHandler::~MessageHandler() {
+}
 /*send byte from server to client*/
-void MessageHandler::send_byte(const char code){  
+void MessageHandler::send_byte(const char code){
     conn->write(code);
 }
 
 /*send answer code from server to client*/
-void MessageHandler::send_anscode(Protocol code){  
+void MessageHandler::send_anscode(Protocol code){
     send_byte(static_cast<unsigned char>(code));
 }
 
 /*send int (four bytes) from server to client*/
-void MessageHandler::send_int(int val){  
+void MessageHandler::send_int(int val){
     send_byte((val >> 24) & 0xFF);
     send_byte((val >> 16) & 0xFF);
     send_byte((val >> 8) & 0xFF);
@@ -22,13 +25,13 @@ void MessageHandler::send_int(int val){
 }
 
 /*send int parameter from server to client*/
-void MessageHandler::send_int_parameter(int i_par){  
+void MessageHandler::send_int_parameter(int i_par){
     send_anscode(Protocol::PAR_NUM);
     send_int(i_par);
 }
 
 /*send string parameter from server to client*/
-void MessageHandler::send_string_parameter(std::string s_par){  
+void MessageHandler::send_string_parameter(std::string s_par){
     send_anscode(Protocol::PAR_STRING);
     send_int(s_par.size());
     for(auto c : s_par){
@@ -37,18 +40,18 @@ void MessageHandler::send_string_parameter(std::string s_par){
 }
 
 /*read byte from client to server*/
-unsigned char MessageHandler::rec_byte(){  
+unsigned char MessageHandler::rec_byte(){
     return conn->read();
 }
 
 /*read command from client to server*/
-Protocol MessageHandler::rec_cmd(){  
+Protocol MessageHandler::rec_cmd(){
     unsigned char c = rec_byte();
     return static_cast<Protocol>(c);
 }
 
 /*read int from client to server*/
-int MessageHandler::rec_int(){  
+int MessageHandler::rec_int(){
     unsigned char b1 = conn->read();
     unsigned char b2 = conn->read();
     unsigned char b3 = conn->read();
