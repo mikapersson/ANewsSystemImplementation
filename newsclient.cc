@@ -135,6 +135,7 @@ void read(MessageHandler& mh, std::string parameters){
   try{
     ng_ID = getIntParam(parameters,1);
     art_ID = getIntParam(parameters,2);
+    // Check if valid numbers i.e, not negative
   }catch(std::exception& e){
     std::cout <<
       "read [NG_ID] [ART_ID]\t- to read article ART_ID in newsgroup NG_ID." <<std::endl;
@@ -166,7 +167,6 @@ void read(MessageHandler& mh, std::string parameters){
   mh.rec_cmd(); // should be ANS_END
   std::cout << "\t" << title << "\t|\tBy: " << author <<"\n" <<std::endl;
   std::cout << text <<std::endl;
-
 }
 
 // With no parametrs this functions lists newsgroups
@@ -195,6 +195,69 @@ void list(MessageHandler &mh, std::string parameters){
     << std::endl;
   return;
 }
+void printHelpMessage(){
+  std::cout << "Available commands: \n"
+            << "list\t\t\t\t\t- list newsgroups.\n"
+            << "list [ng_ID]\t\t\t\t- list articles in a specific newsgroup.\n"
+            << "read [ng_ID] [art_ID]\t\t\t- read an article.\n"
+            << "create \"title\"\t\t\t\t- create a newsgroup.\n"
+            << "create [ng_ID] \"title\" \"author\" \"text\"\t- create an article.\n"
+            << "delete [ng_ID]\t\t\t\t- delete a newsgroup.\n"
+            << "delete [ng_ID] [art_ID]\t\t\t- delete an article.\n"
+            //<< "Where brackets indicate a number and quotation marks indicate a string.\n"
+            // Behövs raden ovanför??
+            << std::endl;
+}
+void createNg(MessageHandler& mh, std::string parameters){
+
+}
+void createArt(MessageHandler &mh, std::string parameters, int ng_ID){
+  std::string art[3];
+  // Inte klar med det här. Bheöver bättre sätt att hitta title, author och text
+  for(int i=0; i!= 3; i++){ // extract the title, author and text from paramters
+    art[i] = parameters.substr(0,parameters.find_first_of(" "));
+    parameters = parameters.substr(parameters.find_first_of(" ") + 1);
+  }
+
+  for(auto& s: art) // Check so all arguments are valid strings
+    if(s == ""){
+      std::cout << "create [ng_ID] \"title\" \"author\" \"text\"\t- create article."
+                << std::endl;
+      return;
+    }
+
+  mh.send_anscode(Protocol::COM_CREATE_ART);
+  mh.send_int_parameter(ng_ID);
+  for(auto& s: art)
+    mh.send_string_parameter(s);
+  mh.send_anscode(Protocol::COM_END);
+
+  mh.rec_cmd(); // SHould be ANS_CREATE_ART check?
+  Protocol p = mh.rec_cmd();
+
+  if(p == Protocol::ANS_NAK){
+    mh.rec_cmd(); // should be ERR_NG_DOES_NOT_EXIST
+    std::cout << "No newsgroup with ID:\t" << ng_ID << "."<< std::endl;
+  }else{
+    std::cout << "Article created." <<std::endl;
+  }
+
+  mh.rec_cmd();
+
+}
+
+void create(MessageHandler &mh, std::string parameters){
+  while(parameters[0] == ' ')
+    parameters.substr(1,std::string::npos);
+  try{
+    int ng_ID = stoi(parameters); // if able to find a number, create art otherwise create ng
+    parameters = parameters.substr(parameters.find_first_of(" ")+1,std::string::npos);
+    createArt(mh,parameters, ng_ID);
+  }catch(std::invalid_argument& e){
+    createNg(mh,parameters);
+  }
+}
+
 
 int main(int argc, char *argv[]){
 
@@ -229,10 +292,10 @@ int main(int argc, char *argv[]){
 
     }
     if(command == "create"){
-
+      create(mh,parameters);
     }
     if(command == "help"){
-
+      printHelpMessage();
     }
 
     if(command == "exit"){
