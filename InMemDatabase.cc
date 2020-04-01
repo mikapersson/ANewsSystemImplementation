@@ -1,5 +1,6 @@
 #include "InMemDatabase.h"
 #include <iostream>
+#include <algorithm>
 
 InMemDatabase::InMemDatabase() {
   NEWSGROUP_ID = 0;
@@ -12,7 +13,7 @@ std::vector<Newsgroup> InMemDatabase::listNewsgroups(){
   for(auto& n : newsgroups){
     ngs.push_back(n.second);
   }
-  std::sort(ngs.begin(),ngs.end(), [&](Newsgroup &n1, Newsgroup &n2){return n2.newsGroup_ID - n1.newsGroup_ID;});
+  std::sort(ngs.begin(),ngs.end(), [&](Newsgroup &n1, Newsgroup &n2){return n1.newsGroup_ID < n2.newsGroup_ID;});
   return ngs;
 }
 
@@ -50,7 +51,7 @@ vector<Article> InMemDatabase::listArticles(unsigned ng_ID){
     articles.push_back(a.second);
   }
 
-  std::sort(articles.begin(),articles.end(), [&](Article &a1, Article &a2){return a2.article_ID - a1.article_ID;});
+  std::sort(articles.begin(),articles.end(), [&](Article &a1, Article &a2){return a1.article_ID < a2.article_ID;});
   return articles;
 }
 
