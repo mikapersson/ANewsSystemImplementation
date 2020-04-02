@@ -61,6 +61,9 @@ int main(int argc, char* argv[]){
                       getArt(db, mh);
                       break;
                     default:
+                      // If unknown command server should deregister client
+                      // and not reply with ANS_END
+                      throw ConnectionClosedException();
                       break;
                 }
                 mh.send_anscode(Protocol::ANS_END);
