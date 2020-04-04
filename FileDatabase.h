@@ -1,5 +1,5 @@
-#ifndef INMEMDATABASE_H
-#define INMEMDATABASE_H
+#ifndef FILEDATABASE_H
+#define FILEDATABASE_H
 #include "Database.h"
 #include <stdio.h>
 #include <sys/types.h>
@@ -48,7 +48,8 @@ public:
   bool artExists(unsigned ng_ID, unsigned art_ID);
 
 private:
-
+  DIR* dir;
+  
 
 };
 
