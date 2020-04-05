@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <fstream>
+#include <string>
 
 using std::ofstream;
 using std::ifstream;
@@ -108,7 +109,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   manifest.close();
   char dirLocation[512] = "./Database/\0";
   char filepath[512];
-  strcat(dirLocation, &s[0]);
+  strcat(dirLocation, &s[0]);  //vad är s?
 
 
   if((dir = opendir(dirLocation)) == nullptr){
