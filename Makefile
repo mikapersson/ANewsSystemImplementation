@@ -21,7 +21,7 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = newsserver newsclient testClient
+PROGS = newsserver newsclient testDatabase
 
 all: $(PROGS)
 
@@ -29,7 +29,7 @@ all: $(PROGS)
 newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 newsclient: connection.o MessageHandler.o newsclient.o
 
-testClient: testClient.o connection.o MessageHandler.o
+testDatabase: testDatabase.o FileDatabase.o
 
 # Phony targets
 .PHONY: all clean distclean

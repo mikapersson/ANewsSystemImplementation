@@ -7,16 +7,18 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <string.h>
 #include <string>
 #include <exception>
 #include <vector>
+#include <stdio.h>
 #include <sstream>
 
 using std::string;
 using std::cout;
 
 string validCommands[] = {"read" , "list" , "delete", "create", "exit" , "help", "clear"};
-//string cts(char array[]){return string(array);}
+
 const unsigned INPUT_BUFFER = 2048; // större?
 
 
@@ -26,8 +28,7 @@ Connection init(int argc, char *argv[]){
     cout << "Usage: ./newsclient server port " << std::endl;
     exit(1);
   }
-
-  // Check if server is in correct format ?? ipadress or "localhost"
+  // Is the servername on the correct form? Check?
 
   int port = -1;
   try{
@@ -57,11 +58,9 @@ void printWelcomeMessage(){
   cout << "Welcome to NewsClient!\n" << "All is set and you are connected"
             << " to the newsserver." << "\nType \"help\" to list available commands. "
             << std::endl;
-
-
 }
 
-// Only checks if first word is in the validCommands list;
+// Only checks if first word is in the validCommands list
 bool validCommand(string command){
   for(auto& s : validCommands){
     if(s == command)
@@ -69,16 +68,17 @@ bool validCommand(string command){
   }
   return false;
 }
+// From main -> list -> listArticles
 void listArticles(MessageHandler& mh, int ID){
   std::vector<std::pair<int,string>> result;
   mh.send_anscode(Protocol::COM_LIST_ART);
   mh.send_int_parameter(ID);
   mh.send_anscode(Protocol::COM_END);
 
-  mh.rec_cmd(); // SHould be ANS_LIST_ART check?!
+  mh.rec_cmd(); // SHould be ANS_LIST_ART check?
   Protocol r = mh.rec_cmd();
   if(r == Protocol::ANS_NAK){
-    mh.rec_cmd(); // SHould e ERR_NG_DOES_NOT_EXIST check?!
+    mh.rec_cmd(); // Should be ERR_NG_DOES_NOT_EXIST check?
     cout << "No newsgroup with ID:\t" << ID << std::endl;
   }else{
     int arts = mh.rec_int_parameter();
@@ -102,11 +102,12 @@ void listArticles(MessageHandler& mh, int ID){
 
 }
 
+// from main -> list -> listNewsgroups
 void listNewsgroups(MessageHandler& mh){
   std::vector<std::pair<int,string>> result;
   mh.send_anscode(Protocol::COM_LIST_NG);
   mh.send_anscode(Protocol::COM_END);
-  mh.rec_cmd(); // should be ANS_LIST , check!!
+  mh.rec_cmd(); // should be ANS_LIST check?
   int ngs = mh.rec_int_parameter();
   string tempStr;
   int tempInt = 0;
@@ -123,10 +124,10 @@ void listNewsgroups(MessageHandler& mh){
   for(auto& p: result){
     cout << "\t" << p.first << ". " << p.second << "\n";
   }
-  mh.rec_cmd(); // should be end Check?!?!
+  mh.rec_cmd(); // should be ANS_END Check?
 
 }
-// get int number index in string p
+// get the index:th int from the string p,
 int getIntParam(string p, int index){
   while(p[0] == ' ')
     p = p.substr(1,string::npos);
@@ -136,21 +137,20 @@ int getIntParam(string p, int index){
   int t = 0;
   while(index != 0){
     if(ss.eof())
-      throw std::invalid_argument("Index larger than arguments");
+      throw std::invalid_argument("Index larger than arguments"); // Correct int not encountered
     ss>>str;
     t = std::stoi(str);
     index--;
   }
   return t;
 }
+// displays an article in the database
+// from main -> read
 void read(MessageHandler& mh, string parameters){
   int ng_ID = 0, art_ID = 0;
-
-
   try{
     ng_ID = getIntParam(parameters,1);
     art_ID = getIntParam(parameters,2);
-    // Check if valid numbers i.e, not negative
   }catch(std::exception& e){
     cout <<
       "read NG_ID ART_ID\t\t\t- to read article ART_ID in newsgroup NG_ID." <<std::endl;
@@ -161,7 +161,7 @@ void read(MessageHandler& mh, string parameters){
   mh.send_int_parameter(art_ID);
   mh.send_anscode(Protocol::COM_END);
 
-  mh.rec_cmd(); // SHould be ANS_GET_ART check?
+  mh.rec_cmd(); // Should be ANS_GET_ART check?
   Protocol reply = mh.rec_cmd();
   if(reply == Protocol::ANS_NAK){
     reply = mh.rec_cmd();
@@ -186,6 +186,7 @@ void read(MessageHandler& mh, string parameters){
 
 // With no parametrs this functions lists newsgroups
 // if provided with an index it will list articles in the newsgroup with that index
+// from main -> list
 void list(MessageHandler &mh, string parameters){
   while(parameters[0] == ' ')
     parameters.substr(1,string::npos);
@@ -193,13 +194,11 @@ void list(MessageHandler &mh, string parameters){
     listNewsgroups(mh);
     return;
   }
-//  if(!parameters.find(" "))
-
-    try{
-      int ng_ID = std::stoi(parameters);
-      listArticles(mh, ng_ID);
-      return;
-    }catch(std::exception& e){}
+  try{
+    int ng_ID = std::stoi(parameters);
+    listArticles(mh, ng_ID);
+    return;
+  }catch(std::exception& e){}
 
   cout <<
     "list\t\t\t\t\t- to display newsgroups\nlist ng_ID\t\t\t\t- to list articles in a specific newsgroup."
@@ -219,6 +218,7 @@ void printHelpMessage(){
             << "exit\t\t\t\t\t- exit NewsClient."
             << std::endl;
 }
+// from main -> create -> createNg
 void createNg(MessageHandler& mh, string parameters){
   unsigned q = 0;
   for(char& c: parameters)
@@ -245,9 +245,9 @@ void createNg(MessageHandler& mh, string parameters){
   }else{ // ANS_ACK
     cout << "Newsgroup created." << std::endl;
   }
-
   mh.rec_cmd(); // ANS_END
 }
+// from main -> create -> createArt
 void createArt(MessageHandler &mh, string parameters, int ng_ID){
   unsigned q = 0;
   for(char& c: parameters)
@@ -299,7 +299,7 @@ void create(MessageHandler &mh, string parameters){
     createNg(mh,parameters);
   }
 }
-
+// from main -> deleteC -> deleteArt
 void deleteArt(MessageHandler& mh, int ng_ID, int art_ID){
   mh.send_anscode(Protocol::COM_DELETE_ART);
   mh.send_int_parameter(ng_ID);
@@ -321,7 +321,7 @@ void deleteArt(MessageHandler& mh, int ng_ID, int art_ID){
 
   mh.rec_cmd(); // should be ANS_END
 }
-
+// from main ->deleteC -> deleteNG
 void deleteNG(MessageHandler& mh, int ng_ID){
   mh.send_anscode(Protocol::COM_DELETE_NG);
   mh.send_int_parameter(ng_ID);
@@ -373,49 +373,50 @@ int main(int argc, char *argv[]){
   while(running){
     cout << ">>>"; // prompt
     std::cin.getline(cinput,INPUT_BUFFER);
+
+    if(std::cin.fail()){
+      cout <<"Input exceed the maximum size of " << INPUT_BUFFER << " chars." << std::endl;
+      std::cin.clear();
+      std::cin.ignore(INPUT_BUFFER*10,'\n');
+      continue;
+    }
     input = string(cinput);
     // The first word is considered the command.
     command = input.substr(0, input.find_first_of(' ',0));
-    // Only send parameters of command to respective function
+    // Only send parameters of the command to respective function
     parameters = input.substr(input.find_first_of(' ',0) + 1,string::npos);
-    if(parameters == command) // If only one word.
+    if(parameters == command) // If only one word -> no parameters
       parameters = "";
     if(!validCommand(command)){
       cout << "Invalid command, type \"help\" for available instructions. " <<std::endl;
       continue;
     }
-    if(command == "read"){
-      read(mh,parameters);
-    }
-    if(command == "list"){
-      list(mh, parameters);
-    }
-    if(command == "delete"){
-      deleteC(mh,parameters);
-    }
-    if(command == "create"){
-      create(mh,parameters);
-    }
-    if(command == "help"){
-      printHelpMessage();
-    }
-    if(command == "clear")
-      clearScreen();
-    if(command == "exit"){
-      running = false;
-    }
+    try{
+      if(command == "read"){
+        read(mh,parameters);
+      }
+      if(command == "list"){
+        list(mh, parameters);
+      }
+      if(command == "delete"){
+        deleteC(mh,parameters);
+      }
+      if(command == "create"){
+        create(mh,parameters);
+      }
+      if(command == "help"){
+        printHelpMessage();
+      }
+      if(command == "clear")
+        clearScreen();
+      if(command == "exit"){
+        running = false;
+      }
+  }catch(ConnectionClosedException& e){
+    cout << "Unexpected server reply. Exiting..." << std::endl;
+    running = false;
+  }
 
-    // Kolla vilket command
-    // sen en switch eller flera ifsatser somgör olika beroende på command
-    // command == exit ska sätta running till false
-    // create ska leda till två undergrupper, ena create Article och andra create newsGroup
-    // samma sak med list, bara list ger alla newsgroups men list 1 ger artiklar i newsgroup 1
-    // och såklart samma med delete
-    // skriver man bara typ create ska det dyka upp en hjälptext hur man använder create
-    // och help ska förklara hur man använder programmet och de olika kommandona
-    // kanske en ny klass som hanterar de olika kommandon eller så blir de många funktioner
-    // i den här filen. Aja det får vi hantera imorgon.
-    // borde också omge hela skiten med en catch för socketclosedException...
   }
   cout << "Exiting newsclient.." << std::endl;
 
