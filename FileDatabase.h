@@ -47,9 +47,16 @@ public:
   // Använd alltid ngExisits först innan denna!!!! så man kan skilja dem
   bool artExists(unsigned ng_ID, unsigned art_ID);
 
-private:
-  DIR* dir;
+
+
+  // Helper functions
+
+  // Make a newsgroup from a folder path
   
+
+private:
+  char root[20] = "./Database/";
+
 
 };
 
