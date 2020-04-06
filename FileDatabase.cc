@@ -8,6 +8,9 @@
 #include <string.h>
 #include <fstream>
 
+using std::ofstream;
+using std::ifstream;
+
 FileDatabase::FileDatabase(){
 
   DIR* dir = nullptr;
