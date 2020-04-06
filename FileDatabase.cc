@@ -121,7 +121,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
     strcat(filepath, ent->d_name);
     article.open(filepath);
 
-    
+
 
 
     article.close();
