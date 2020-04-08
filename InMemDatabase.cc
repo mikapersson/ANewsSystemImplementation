@@ -26,7 +26,7 @@ bool InMemDatabase::createNewsgroup(string name){
   }
     NEWSGROUP_ID++; // To make sure that every newsgroup is unique
     Newsgroup n = {name, NEWSGROUP_ID, 0,std::unordered_map<unsigned,Article>()};
-    newsgroups[NEWSGROUP_ID] =n;
+    newsgroups[NEWSGROUP_ID] = n;
     return true;
 }
 
