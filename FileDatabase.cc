@@ -1,21 +1,18 @@
 #include "FileDatabase.h"
 #include <iostream>
 #include <stdio.h>
-
 #include <dirent.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>
 #include <fstream>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
-
 #include <cstring>
 #include <cerrno>
-#include <stdlib.h>
-#include <dirent.h>
 #include <errno.h>
+#include <stdlib.h>
+
 
 using std::ofstream;
 using std::ifstream;
@@ -30,17 +27,16 @@ FileDatabase::FileDatabase(){
       //std::cout << "File: " << ent->d_name <<std::endl;
     }
   }else{
-      std::cout << "No root directory found. Creating...\n";
-      int status = mkdir("./Database",S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      std::cout << "No existing database found. Creating new...\n";
+      int status = mkdir("./Database", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
       if(status == -1 ){
         std::cerr << "Unable to create root directory in database." << '\n';
         exit(1);
       }else{
-        std::cout << "Successfully created root directory" << std::endl;
+        // std::cout << "Successfully created root directory" << std::endl;
       }
   }
-
   closedir(dir);
 
   std::ofstream manifest("./Database/manifest" , std::ofstream::app); // list of Newsgroups
@@ -54,7 +50,7 @@ FileDatabase::FileDatabase(){
 FileDatabase::~FileDatabase(){
 
 }
-// Borde return vector med strings istället blir asjobbigt annars!
+
 std::vector<Newsgroup> FileDatabase::listNewsgroups(){
   std::vector<Newsgroup> ngs;
   std::vector<Article> tmpA;
@@ -99,10 +95,10 @@ bool FileDatabase::createNewsgroup(string name){
   std::string tmpName, tmpId, artCount;
 
   while(!in_manifest.eof()){
-    in_manifest >> tmpName;
-    in_manifest >> tmpId;
-    in_manifest >> artCount;
+    in_manifest >> tmpName >> tmpId >> artCount;
+
     if(tmpName == name){ // Already exists
+      in_manifest.close();
       return false;
     }
   }
@@ -116,7 +112,7 @@ bool FileDatabase::createNewsgroup(string name){
 
   NEWSGROUP_ID++;
   // Structure of manifest file
-  // Newsgroup name newsgroup ID then article counter
+  // [Newsgroup name] [newsgroup ID] [article counter]
 
   out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
   out_manifest.close();
@@ -125,8 +121,9 @@ bool FileDatabase::createNewsgroup(string name){
   char dirPath[512] = "./Database/";
   strcat(dirPath, name.c_str());
 
-  if(stat(dirPath, &sb) == -1){
-    std::cout << std::strerror(errno) << std::endl;
+  if(stat(dirPath, &sb) == 0){ // Error should be no file with that name
+    // Delete that file
+    return false;
   }
 
   if(!S_ISDIR(sb.st_mode)){
@@ -187,21 +184,53 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   }
   manifest.write(contents, filelength);
 
-
-
   // remove newsgroup line from manifest
   char path[512] = "./Database/";
   strcat(path, name.c_str());
-  int status = remove(path);
-
-  std::cout << "Status of deletion operation: " << status << std::endl;
-
 
   // remove folder
+  int status = removeNewsgroup(path);
+  if(status == -1){
+    std::cout << "An error occured in delete newsgroup" << std::endl;
+    std::cout << "Errno: \t" << strerror(errno) << std::endl;
+    exit(1);
+  }
+
   delete[] contents;
   return true;
 }
 
+int FileDatabase::removeNewsgroup(char path[]){
+
+  DIR* dir = nullptr;
+  struct dirent* ent = nullptr;
+  struct stat sb;
+
+  char filename[1024];
+  strcpy(filename , path);
+  filename[strlen(filename)] = '/';
+
+  if((dir = opendir(path)) == nullptr){
+    // Some error exit
+  }
+  while((ent = readdir(dir)) != nullptr){
+    strcat( filename , ent->d_name);
+    stat(filename, &sb);
+    std::cout << filename << std::endl;
+    if(S_ISREG(sb.st_mode)){
+      if(remove(filename) == -1){
+        return -1;
+        // An error occured check errno
+      }
+    }
+    strcpy(filename, path);
+    filename[strlen(filename) + 1] = '\0';
+    filename[strlen(filename)] = '/';
+
+  }
+  std::cout << "Removing directory!" << std::endl;
+  return remove(path);
+}
 // Presumes the newsgroup with ng_ID exists
 std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   std::vector<Article> arts;
@@ -335,7 +364,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
 void FileDatabase::increaseArtCounter(unsigned ID){
   std::fstream file("./Database/manifest");
 
-  if(!file){std::cout << "Error in increaseartcountrer."<< std::endl;
+  if(!file){std::cout << "Error in increaseartcounter."<< std::endl;
     exit(1);
   }
   file.seekg(0,file.end);
@@ -385,9 +414,55 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
 
 
 bool FileDatabase::ngExists(unsigned ng_ID){
-  return false;
+
+  // Check manifest
+  std::ifstream manifest("./Database/manifest");
+
+  if(!manifest){
+    std::cout << "Error in ngExists. Unable to open manifest." << std::endl;
+    exit(1);
+  }
+
+  unsigned tmpID, tmpArtCounter;
+  std::string tmpName;
+
+  while(!manifest.eof()){
+    manifest >> tmpName >> tmpID >> tmpArtCounter;
+    if(tmpID == ng_ID)
+      break;
+}
+  manifest.close();
+  return (tmpID == ng_ID);
 }
 
 bool FileDatabase::artExists(unsigned ng_ID, unsigned art_ID){
-  return false;
+
+  char filepath[1024] = "./Database/";
+  std::ifstream manifest("./Database/manifest");
+
+  if(!manifest){
+    std::cout << "Error in ngExists. Unable to open manifest." << std::endl;
+    exit(1);
+  }
+
+  unsigned tmpID, tmpArtCounter;
+  std::string tmpName;
+
+  while(!manifest.eof()){
+    manifest >> tmpName >> tmpID >> tmpArtCounter;
+    if(tmpID == ng_ID)
+      break;
+}
+  manifest.close();
+
+  if(tmpID != ng_ID)
+    return false;
+
+  strcat(filepath, tmpName.c_str());
+  filepath[strlen(filepath)] = '/';
+  std::string strArtID = std::to_string(art_ID);
+  strcat(filepath, strArtID.c_str());
+
+  struct stat sb;
+  return (stat(filepath, &sb) == 0);
 }

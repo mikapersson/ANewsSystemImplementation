@@ -5,8 +5,7 @@
 #include <string>
 #include <exception>
 #include <algorithm>
-//#include "InMemDatabase.h"
-//#include "FileDatabase.h" // Inte gjord än
+
 
 using std::string;
 using std::vector;
@@ -33,11 +32,10 @@ public:
 
   // Create newsGroup, newsgroup name as parameter
   //returns true if creation was successful, otherwise false
-  // Should throw "ERR_NG_ALREADY_EXISTS"
+
   virtual bool createNewsgroup(string name) = 0;
 
-  // Delete newsgroup
-  //  should throw "ERR_NG_DOES_NOT_EXIST"  //vi kastar väl inget här?
+
   virtual bool deleteNewsgroup(unsigned ng_ID) = 0;
 
   // List articles in newsgroup
@@ -60,8 +58,6 @@ public:
   // kollar om artikeln art_ID finns i newgsgroupen ng_ID finns
   // Använd alltid ngExisits först innan denna!!!! så man kan skilja dem
   virtual bool artExists(unsigned ng_ID, unsigned art_ID) = 0;
-
-
 
 };
 
