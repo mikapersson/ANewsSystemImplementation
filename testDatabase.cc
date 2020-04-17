@@ -12,9 +12,19 @@ int main(int argc, char *argv[]){
 
   FileDatabase d;
 
-  std::cout << "Directory created: " <<static_cast<bool> (d.createNewsgroup("News1"))
+  std::cout << "Directory created:\t" <<static_cast<bool> (d.createNewsgroup("News1 2"))
             << std::endl;
-  d.deleteArticle(1,1);
+  std::cout << "Article created:\t" <<(d.createArticle(1,"Intresting things about","Me and myself", "Text about me"))
+                      << std::endl;
+  Article a = d.getArticle(1,1);
+
+  std::cout << "title:\t" << a.title << "\tauthor:\t"<< a.author
+            << "\n\n" << a.text << std::endl;
+
+
+  //std::cout << "Article deleted:\t" <<(d.deleteArticle(1,1))
+              //                  << std::endl;
+
   /*
   std::cout << "Directory created: " <<static_cast<bool> (d.createNewsgroup("News2"))
   << std::endl;

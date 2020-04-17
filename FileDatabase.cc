@@ -444,9 +444,9 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
   strcat(path , tmpArtID.c_str());
   // path now contains path to article file
 
-  int status = remove(path);
+  int status = remove(path); // removes article file
 
-  if(status == -1){
+  if(status == -1){ // If error in remove
     if(errno == 2){ // No such file or directory
       return false;
     }else{
@@ -461,19 +461,20 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
 
   // Find newsgroup
   if(!ngExists(ng_ID)){
-    // Error ng does not exist
+    std::cout << "Ng not found:\t" << ng_ID << std::endl;
     exit(1);
   }
 
 
   char path[512] = "./Database/";
   strcat(path , tmpNgName.c_str());
+  path[strlen(path)] = '/';
   string tmpArtID = std::to_string(art_ID);
   strcat(path , tmpArtID.c_str());
 
   ifstream article(path);
   if(!article.good()){
-    // Error, unable to open article file
+    std::cout << "Can not read manifest!" << std::endl;
     exit(1);
   }
   article.seekg(0,article.end);
@@ -520,6 +521,12 @@ bool FileDatabase::ngExists(unsigned ng_ID){
 bool FileDatabase::artExists(unsigned ng_ID, unsigned art_ID){
 
   char filepath[1024] = "./Database/";
+
+  if(!ngExists(ng_ID)){
+    return false;
+  }
+
+  /*
   std::ifstream manifest("./Database/manifest");
 
   if(!manifest){
@@ -539,12 +546,12 @@ bool FileDatabase::artExists(unsigned ng_ID, unsigned art_ID){
 
   if(tmpID != ng_ID)
     return false;
-
-  strcat(filepath, tmpName.c_str());
+  */
+  strcat(filepath, tmpNgName.c_str());
   filepath[strlen(filepath)] = '/';
   std::string strArtID = std::to_string(art_ID);
   strcat(filepath, strArtID.c_str());
 
   struct stat sb;
-  return (stat(filepath, &sb) == 0);
+  return (stat(filepath, &sb) == 0); // no error, if == -1 then could check errno
 }

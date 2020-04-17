@@ -50,8 +50,9 @@ public:
   int removeNewsgroup(char path[]);
 
 private:
-  std::string tmpNgName;
+  std::string tmpNgName; // is set by ngExists function
   char root[11] = "./Database";
+  char manifestPath[20] = "./Database/manifest";
   unsigned NEWSGROUP_ID;
 };
 
