@@ -17,23 +17,20 @@ public:
   // Create newsGroup, newsgroup name as parameter
   //returns true if creation was successful, otherwise false
   // Should throw "ERR_NG_ALREADY_EXISTS"
-  bool createNewsgroup(string name);  //ändrade till bool för enklare hantering i serverklassen
+  bool createNewsgroup(string name);
 
   // Delete newsgroup
   //  should throw "ERR_NG_DOES_NOT_EXIST"
   bool deleteNewsgroup(unsigned ng_ID);
 
   // List articles in newsgroup
-  // Should throw "ERR_NG_DOES_NOT_EXIST"
   std::vector<Article> listArticles(unsigned ng_ID);
-
 
   // Create article in newsgroup ng_ID. If successfull returns true, if
   // no newsgroup with that ID present, returns false.
   bool createArticle(unsigned ng_ID , string title, string author, string text);
 
   // Delete an article in newsgroup
-  // ska ändras till void eftersom den utgår från att både newsgroupen och artiklen finns
   bool deleteArticle(unsigned ng_ID , unsigned art_ID);
 
   // Get an article in a newsGroup
@@ -49,13 +46,14 @@ public:
 
 
   void increaseArtCounter(unsigned ID);
+  int removeNewsgroup(char path[]);
   // Helper functions
 
   // Make a newsgroup from a folder path
 
 
 private:
-  char root[20] = "./Database/";
+  char root[11] = "./Database";
   unsigned NEWSGROUP_ID;
 
 };
