@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
 
   std::cout << "Directory created: " <<static_cast<bool> (d.createNewsgroup("News1"))
             << std::endl;
-
+  d.deleteArticle(1,1);
   /*
   std::cout << "Directory created: " <<static_cast<bool> (d.createNewsgroup("News2"))
   << std::endl;

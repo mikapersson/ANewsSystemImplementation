@@ -16,6 +16,9 @@
 
 using std::ofstream;
 using std::ifstream;
+using std::fstream;
+using std::string;
+
 
 FileDatabase::FileDatabase(){
 
@@ -144,7 +147,8 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   std::fstream manifest("./Database/manifest");
 
   if(!manifest){
-    // something wrong
+    // Error opening manifest
+    exit(1);
   }
   manifest.seekg(0,manifest.end);
   int filelength = manifest.tellg();
@@ -153,7 +157,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
 
 
   unsigned tmpID, tmpArtCounter;
-  std::string tmpName,name;
+  string tmpName,name;
   unsigned line = 0;
   // check manifest for newsgroup id
   while(!manifest.eof()){
@@ -204,33 +208,35 @@ int FileDatabase::removeNewsgroup(char path[]){
 
   DIR* dir = nullptr;
   struct dirent* ent = nullptr;
-  struct stat sb;
+  struct stat sb; // Used to check file existence and type
 
-  char filename[1024];
+  char filename[1024]; // Borde väl ha någon gemensam konstant för buffersize
   strcpy(filename , path);
   filename[strlen(filename)] = '/';
 
   if((dir = opendir(path)) == nullptr){
-    // Some error exit
+    // Unable to open newsgroup Directory
+    // Failure, exit
   }
   while((ent = readdir(dir)) != nullptr){
-    strcat( filename , ent->d_name);
+    strcat( filename , ent->d_name); // fullname of file
     stat(filename, &sb);
-    std::cout << filename << std::endl;
+    // std::cout << filename << std::endl;
     if(S_ISREG(sb.st_mode)){
-      if(remove(filename) == -1){
-        return -1;
+      if(remove(filename) == -1){ // Removes file
         // An error occured check errno
+        return -1;
       }
     }
-    strcpy(filename, path);
+    strcpy(filename, path); // reseting filename
     filename[strlen(filename) + 1] = '\0';
     filename[strlen(filename)] = '/';
 
   }
-  std::cout << "Removing directory!" << std::endl;
+
   return remove(path);
 }
+
 // Presumes the newsgroup with ng_ID exists
 std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   std::vector<Article> arts;
@@ -254,6 +260,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
       break;
   }
   manifest.close();
+
   char dirLocation[512] = "./Database/\0";
   char filepath[512];
   strcat(dirLocation, name.c_str());
@@ -262,10 +269,9 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   if((dir = opendir(dirLocation)) == nullptr){
     std::cerr << "Error in list articles." << std::endl;
     exit(1);
+
   }
-
-
-  std::string title,author,text,tmp;
+  std::string title, author, text,tmp;
   unsigned art_ID;
 
   while((ent = readdir(dir)) != nullptr){
@@ -294,15 +300,10 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
     std::getline(article, author);
     article >> art_ID;
 
-    while(article >> tmp){ // FUlt men funkar
+    while(article >> tmp){ // Fult men funkar. Borde ändra till article.read!!
       text += tmp;
       text += " ";
     }
-    /*
-    while(!article.eof()){
-      article.get(c);
-      text += std::string(&c);
-    }*/
 
     arts.push_back(Article{title,author,art_ID,text});
     article.close();
@@ -326,17 +327,18 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
     in_manifest >> ngName;
     in_manifest >> ng;
     in_manifest >> artID;
-    if(ng == ng_ID){ // found correct
+    if(ng == ng_ID){ // found correct newsgroup
       break;
     }
   }
+
   in_manifest.close();
   if(ng != ng_ID) // not found
     return false;
 
   // increase counter of created articles in manifest
   increaseArtCounter(ng_ID);
-  artID++; // to match increased Article count
+  artID++; // necessary to match increased Article count
 
   char filePath[512] = "./Database/";
   strcat(filePath, ngName.c_str());
@@ -344,10 +346,10 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
   std::string tmpArtID = std::to_string(artID);
   strcat(filePath, tmpArtID.c_str());
 
-  std::ofstream article(filePath, std::ofstream::trunc);
+  std::ofstream article(filePath , std::ofstream::trunc);
 
   if(!article){
-    std::cout<< "error opening article for output!"<<std::endl;
+    std::cout << "Error opening article for output in createArticle."<<std::endl;
     exit(1);
   }
 
@@ -355,6 +357,8 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
   article << author << std::endl;
   article << tmpArtID << std::endl;
   article << text;
+
+  article.close();
 
   return true;
 }
@@ -367,6 +371,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   if(!file){std::cout << "Error in increaseartcounter."<< std::endl;
     exit(1);
   }
+  // Find file length and reset file position
   file.seekg(0,file.end);
   int filelength = file.tellg();
   char* contents = new char[filelength];
@@ -375,47 +380,123 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   std::string str;
   int tmp2, position = 0;
   unsigned tmp1;
+  // Find correct postion of Article count of correct Newsgroup
   while(!file.eof()){
     file >> str;
     file >> tmp1;
     if(tmp1 == ID){
       position = file.tellg();
-      position++; // For space
+      position++; // For space in file
       file >> tmp2;
       break;
     }
   }
-  file.read(contents, filelength);
-  tmp2++;
+
+  file.read(contents, filelength); // reads the rest of the file
+
+  tmp2++; // increases Article count by one before writing it back into file
   str = std::to_string(tmp2);
   char* newContents = new char[filelength];
-  strcat(newContents, str.c_str());
-  strcat(newContents,contents);
-  file.clear();
+  strcat(newContents, str.c_str()); // adds new number
+  strcat(newContents,contents); // adds rest of file after Article Count
+  file.clear(); // resets file
 
-  if(!file.good()){
-    std::cout << "något är fel!";
+  if(!file.good()){ // If file not ready to write too
+    std::cout << "Error in artCounter.";
   }
-  file.seekg(position);
-  file.write(newContents, filelength);
 
-  delete[] newContents;
+  file.seekg(position); // find correct position for Article count
+  file.write(newContents, filelength); // overwrite rest of file with new content
+
+  delete[] newContents; // Free up memory
   delete[] contents;
 
   file.close();
 }
+
+
 bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
-  return false;
+
+  std::ifstream manifest("./Database/manifest");
+  if(!manifest){
+    std::cout << "Error in deleteArticle. Unable to open manifest." << std::endl;
+    exit(1);
+  }
+
+  unsigned tmpID, tmpArtCounter;
+  std::string tmpName;
+
+  while(!manifest.eof()){
+    manifest >> tmpName >> tmpID >> tmpArtCounter;
+    if(tmpID == ng_ID)
+      break;
+}
+  manifest.close();
+  if(tmpID != ng_ID){
+    // Error newsgroup does not exist
+    return false;
+  }
+
+  char path[512] = "./Database/";
+  strcat(path , tmpName.c_str());
+  path[strlen(path)] = '/';
+  string tmpArtID = std::to_string(art_ID);
+  strcat(path , tmpArtID.c_str());
+  // path now contains path to article file
+
+  int status = remove(path);
+
+  if(status == -1){
+    if(errno == 2){ // No such file or directory
+      return false;
+    }else{
+      std::cout << "Error in deleteArticle:\t" << std::strerror(errno) <<std::endl;
+      exit(1);
+    }
+  }
+  return true;
 }
 
 Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
-  return Article();
+
+  // Find newsgroup
+  if(!ngExists(ng_ID)){
+    // Error ng does not exist
+    exit(1);
+  }
+
+
+  char path[512] = "./Database/";
+  strcat(path , tmpNgName.c_str());
+  string tmpArtID = std::to_string(art_ID);
+  strcat(path , tmpArtID.c_str());
+
+  ifstream article(path);
+  if(!article.good()){
+    // Error, unable to open article file
+    exit(1);
+  }
+  article.seekg(0,article.end);
+  int filelength = article.tellg();
+  char* textArr = new char[filelength];
+  article.seekg(0);
+
+  string title , author;
+  unsigned ID;
+
+  std::getline(article , title);
+  std::getline(article , author);
+  article >> ID;
+
+  article.read(textArr , filelength);
+  string text(textArr);
+
+  return Article{title,author, ID, text};
 }
 
 
 bool FileDatabase::ngExists(unsigned ng_ID){
 
-  // Check manifest
   std::ifstream manifest("./Database/manifest");
 
   if(!manifest){
@@ -432,6 +513,7 @@ bool FileDatabase::ngExists(unsigned ng_ID){
       break;
 }
   manifest.close();
+  tmpNgName = tmpName;
   return (tmpID == ng_ID);
 }
 
