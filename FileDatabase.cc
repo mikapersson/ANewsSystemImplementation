@@ -234,13 +234,8 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   manifest.close();
   char dirLocation[512] = "./Database/\0";
   char filepath[512];
-<<<<<<< HEAD
-  strcat(dirLocation, &s[0]);  //vad är s?
-
-=======
   strcat(dirLocation, name.c_str());
   dirLocation[strlen(dirLocation) + 1] = '/';
->>>>>>> 3603198f01a62c653ba819dd975f32e3c909459b
 
   if((dir = opendir(dirLocation)) == nullptr){
     std::cerr << "Error in list articles." << std::endl;
