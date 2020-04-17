@@ -20,7 +20,7 @@ public:
   bool createNewsgroup(string name);  //ändrade till bool för enklare hantering i serverklassen
 
   // Delete newsgroup
-  //  should throw "ERR_NG_DOES_NOT_EXIST"  //vi kastar väl inget här?
+  //  should throw "ERR_NG_DOES_NOT_EXIST"
   bool deleteNewsgroup(unsigned ng_ID);
 
   // List articles in newsgroup
@@ -48,15 +48,15 @@ public:
   bool artExists(unsigned ng_ID, unsigned art_ID);
 
 
-
+  void increaseArtCounter(unsigned ID);
   // Helper functions
 
   // Make a newsgroup from a folder path
-  
+
 
 private:
   char root[20] = "./Database/";
-
+  unsigned NEWSGROUP_ID;
 
 };
 
