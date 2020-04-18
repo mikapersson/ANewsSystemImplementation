@@ -31,7 +31,7 @@ FileDatabase::FileDatabase(){
     }
   }else{
       std::cout << "No existing database found. Creating new...\n";
-      int status = mkdir("./Database", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      int status = mkdir(root, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
       if(status == -1 ){
         std::cerr << "Unable to create root directory in database:\t" << std::strerror(errno)

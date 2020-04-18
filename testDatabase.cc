@@ -52,6 +52,6 @@ int main(int argc, char *argv[]){
   FileDatabase database;
   cout << "Created FileDatabase object" << endl;
 
-  auto ngList = database.listNewsgroups();
+  //auto ngList = database.listNewsgroups();
 
 }
