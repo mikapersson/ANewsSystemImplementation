@@ -21,13 +21,14 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = newsserver newsclient testDatabase
+PROGS = newsserver newsclient testDatabase diskserver
 
 all: $(PROGS)
 
 #Targets
 newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 newsclient: connection.o MessageHandler.o newsclient.o
+diskserver: diskserver.o MessageHandler.o connection.o FileDatabase.o server.o
 
 testDatabase: testDatabase.o FileDatabase.o
 

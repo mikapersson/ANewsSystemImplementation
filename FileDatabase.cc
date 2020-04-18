@@ -34,7 +34,8 @@ FileDatabase::FileDatabase(){
       int status = mkdir("./Database", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
       if(status == -1 ){
-        std::cerr << "Unable to create root directory in database." << '\n';
+        std::cerr << "Unable to create root directory in database:\t" << std::strerror(errno)
+                  << std::endl;;
         exit(1);
       }else{
         // std::cout << "Successfully created root directory" << std::endl;

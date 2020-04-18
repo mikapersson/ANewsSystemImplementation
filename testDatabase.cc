@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
 
   FileDatabase d;
 
-  std::cout << "Directory created:\t" <<static_cast<bool> (d.createNewsgroup("News1 2"))
+  std::cout << "Directory created:\t" <<static_cast<bool> (d.createNewsgroup("News12"))
             << std::endl;
   std::cout << "Article created:\t" <<(d.createArticle(1,"Intresting things about","Me and myself", "Text about me"))
                       << std::endl;
