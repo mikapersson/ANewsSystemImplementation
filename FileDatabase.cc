@@ -45,7 +45,7 @@ FileDatabase::FileDatabase(){
   std::ofstream manifest("./Database/manifest" , std::ofstream::app); // list of Newsgroups
 
   manifest.close();
-  // Kna inte ha en variable med newsgroup id måste läsa in antal rader i manifest
+  // Kan inte ha en variable med newsgroup id måste läsa in antal rader i manifest
   NEWSGROUP_ID = 0;
 
 }
@@ -271,7 +271,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
     exit(1);
 
   }
-  std::string title, author, text,tmp;
+  std::string title, author, text, tmp;
   unsigned art_ID;
 
   while((ent = readdir(dir)) != nullptr){
@@ -430,7 +430,7 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
     manifest >> tmpName >> tmpID >> tmpArtCounter;
     if(tmpID == ng_ID)
       break;
-}
+  }
   manifest.close();
   if(tmpID != ng_ID){
     // Error newsgroup does not exist
