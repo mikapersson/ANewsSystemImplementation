@@ -34,7 +34,8 @@ FileDatabase::FileDatabase(){
       int status = mkdir("./Database", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
       if(status == -1 ){
-        std::cerr << "Unable to create root directory in database." << '\n';
+        std::cerr << "Unable to create root directory in database:\t" << std::strerror(errno)
+                  << std::endl;;
         exit(1);
       }else{
         // std::cout << "Successfully created root directory" << std::endl;
@@ -528,22 +529,18 @@ bool FileDatabase::artExists(unsigned ng_ID, unsigned art_ID){
 
   /*
   std::ifstream manifest("./Database/manifest");
-
   if(!manifest){
     std::cout << "Error in ngExists. Unable to open manifest." << std::endl;
     exit(1);
   }
-
   unsigned tmpID, tmpArtCounter;
   std::string tmpName;
-
   while(!manifest.eof()){
     manifest >> tmpName >> tmpID >> tmpArtCounter;
     if(tmpID == ng_ID)
       break;
 }
   manifest.close();
-
   if(tmpID != ng_ID)
     return false;
   */

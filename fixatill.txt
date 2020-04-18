@@ -1,0 +1,3 @@
+- går att göra ny newsgroup även om manifest-filen inte finns i databasen
+
+- 
