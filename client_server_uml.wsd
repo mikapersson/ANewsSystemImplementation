@@ -1,0 +1,13 @@
+@startuml
+actor user
+participant newsclient
+participant newsserver
+database InMemDatabase
+database FileDatabase 
+
+user -> newsclient: Send Http request to get info
+newsclient -> newsserver: something
+newsserver -> InMemDatabase
+newsserver -> FileDatabase
+
+@enduml

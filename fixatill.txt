@@ -1,3 +1,9 @@
-- går att göra ny newsgroup även om manifest-filen inte finns i databasen
+- vad säger attributet tmpNgName?
 
-- 
+ON NON-EXISTENT NEWSGROUP:
+- deleteNG
+- listArticles
+- createArticle
+- deleteArticle
+- getArticle
+- ngExists

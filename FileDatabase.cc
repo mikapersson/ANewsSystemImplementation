@@ -43,7 +43,7 @@ FileDatabase::FileDatabase(){
   }
   closedir(dir);
 
-  std::ofstream manifest("./Database/manifest" , std::ofstream::app); // list of Newsgroups
+  std::ofstream manifest(manifestPath , std::ofstream::app); // list of Newsgroups
 
   manifest.close();
   // Kan inte ha en variable med newsgroup id måste läsa in antal rader i manifest
@@ -59,7 +59,7 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
   std::vector<Newsgroup> ngs;
   std::vector<Article> tmpA;
 
-  ifstream manifest("./Database/manifest");
+  ifstream manifest(manifestPath);
   if(!manifest.good()){
     std::cerr << "Error opening manifest file!" << std::endl;
     exit(1);
@@ -136,7 +136,7 @@ bool FileDatabase::createNewsgroup(string name){
 bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
 
 
-  std::fstream manifest("./Database/manifest");
+  std::fstream manifest(manifestPath);
 
   if(!manifest){
     // Error opening manifest
@@ -166,14 +166,14 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   }
 
   name = tmpName;
-  long pos2 = manifest.tellg();
+  long pos2 = manifest.tellg();  // vad händer på dessa raderna?
   manifest.seekg(pos2  + 1);
   manifest.read(contents2, filelength -pos2);
   manifest.clear();
   manifest.seekg(0);
   manifest.read(contents1, pos1);
   manifest.close();
-  manifest.open("./Database/manifest", std::fstream::out | std::fstream::trunc);
+  manifest.open(manifestPath, std::fstream::out | std::fstream::trunc);
 
   manifest.write(contents1 , pos1); // Content before
   manifest.write(contents2, filelength - pos2  - 1); // content after
@@ -492,7 +492,7 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
 
 bool FileDatabase::ngExists(unsigned ng_ID){
 
-  std::ifstream manifest("./Database/manifest");
+  std::ifstream manifest(manifestPath);
 
   if(!manifest){
     std::cout << "Error in ngExists. Unable to open manifest." << std::endl;

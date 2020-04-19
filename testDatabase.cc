@@ -49,9 +49,12 @@ int main(int argc, char *argv[]){
   */
 
  //MIKA TESTAR
-  FileDatabase database;
-  cout << "Created FileDatabase object" << endl;
+ cout << "Create FileDatabase object\n" << endl;
+FileDatabase database;
+  
 
-  //auto ngList = database.listNewsgroups();
+cout << "DELETE NON-EXISTENT NEWSGROUP" << endl;
+auto del = database.deleteNewsgroup(10);
+cout << del << endl;
 
 }
