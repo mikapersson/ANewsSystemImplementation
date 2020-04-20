@@ -83,7 +83,7 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
 }
 
 
-bool FileDatabase::createNewsgroup(string name){
+bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any blank spaces
   ifstream in_manifest(manifestPath);
   if(!in_manifest){
     std::cout << "Unable to open manifest file in CreateNewsgroup." << std::endl;
@@ -105,19 +105,17 @@ bool FileDatabase::createNewsgroup(string name){
     exit(1);
   }
 
-  ++NEWSGROUP_ID;
-
   struct stat sb;
   char dirPath[512] = "./FileDatabase/";
   strcat(dirPath, name.c_str());
 
   if(stat(dirPath, &sb) == 0){ // Error should be no file with that name
-    // Delete that file
     return false;
   }
 
   // Structure of manifest file:
   // [Newsgroup name] [newsgroup ID] [article counter]
+  ++NEWSGROUP_ID;
 
   out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
   out_manifest.close();

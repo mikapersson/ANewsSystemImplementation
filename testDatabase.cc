@@ -52,7 +52,9 @@ int main(int argc, char *argv[]){
 cout << "Create FileDatabase object\n" << endl;
 FileDatabase database;
 
-database.createNewsgroup("first NG");
+database.createNewsgroup("first-NG");
+database.createNewsgroup("first-NG");
+database.createNewsgroup("second-NG");
   
 
 /*cout << "DELETE NON-EXISTENT NEWSGROUP" << endl;
