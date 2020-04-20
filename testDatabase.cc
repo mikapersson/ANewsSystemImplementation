@@ -54,14 +54,15 @@ FileDatabase database;
 
 database.createNewsgroup("first-NG");
 database.createNewsgroup("second-NG");
-database.createNewsgroup("second-NG");
 database.createNewsgroup("third-NG");
+database.createNewsgroup("fourth-NG");
 
-cout << "DELETE EXISTENT NEWSGROUP" << endl;
-auto del2 = database.deleteNewsgroup(2);
-cout << del2 << endl;
+database.deleteNewsgroup(2);
+database.deleteNewsgroup(4);
 
-database.deleteNewsgroup(1);
-database.deleteNewsgroup(3);
+database.createArticle(1, "first-article", "Mika", "This is some other text");
+
+auto list = database.listNewsgroups();
+
 
 }
