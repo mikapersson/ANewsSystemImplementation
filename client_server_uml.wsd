@@ -1,13 +1,42 @@
-@startuml
+@startuml A Newsserver Implementation
+
 actor user
+
 participant newsclient
+participant connection
+participant MessageHandler
+participant connectionclosedexception
+participant Protocol 
+participant server
 participant newsserver
+
+database Database
 database InMemDatabase
 database FileDatabase 
 
-user -> newsclient: Send Http request to get info
+
+user -> newsclient: Something
+
+newsclient -> connection: X
+newsclient -> MessageHandler
+newsclient -> connectionclosedexception
+newsclient -> Protocol
 newsclient -> newsserver: something
-newsserver -> InMemDatabase
-newsserver -> FileDatabase
+
+MessageHandler -> connection
+MessageHandler -> connectionclosedexception
+MessageHandler -> Protocol
+
+newsserver -> connection
+newsserver -> MessageHandler
+newsserver -> connectionclosedexception
+newsserver -> Protocol
+newsserver -> server
+newsserver -> Database
+
+Database -> InMemDatabase
+Database -> FileDatabase
+
+server -> connection
 
 @enduml
