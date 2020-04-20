@@ -15,27 +15,27 @@ database InMemDatabase
 database FileDatabase 
 
 
-user -> newsclient
+user <-> newsclient
 
-newsclient -> connection
-newsclient -> MessageHandler
-newsclient -> connectionclosedexception
-newsclient -> Protocol
-newsclient -> newsserver
+newsclient <-> connection
+newsclient <-> MessageHandler
+newsclient <-> connectionclosedexception
+newsclient <-> Protocol
+newsclient <-> newsserver
 
-MessageHandler -> connection
-MessageHandler -> connectionclosedexception
-MessageHandler -> Protocol
+MessageHandler <-> connection
+MessageHandler <-> connectionclosedexception
+MessageHandler <-> Protocol
 
-newsserver -> connection
-newsserver -> MessageHandler
-newsserver -> connectionclosedexception
-newsserver -> Protocol
-newsserver -> server
-newsserver -> Database
+newsserver <-> connection
+newsserver <-> MessageHandler
+newsserver <-> connectionclosedexception
+newsserver <-> Protocol
+newsserver <-> server
+newsserver <-> Database
 
-InMemDatabase -> Database
-FileDatabase -> Database
+InMemDatabase <-> Database
+FileDatabase <-> Database
 
 server -> connection
 
