@@ -107,12 +107,6 @@ bool FileDatabase::createNewsgroup(string name){
 
   ++NEWSGROUP_ID;
 
-  // Structure of manifest file:
-  // [Newsgroup name] [newsgroup ID] [article counter]
-
-  out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
-  out_manifest.close();
-
   struct stat sb;
   char dirPath[512] = "./FileDatabase/";
   strcat(dirPath, name.c_str());
@@ -122,6 +116,12 @@ bool FileDatabase::createNewsgroup(string name){
     return false;
   }
 
+  // Structure of manifest file:
+  // [Newsgroup name] [newsgroup ID] [article counter]
+
+  out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
+  out_manifest.close();
+
   if(!S_ISDIR(sb.st_mode)){
     int status = mkdir(dirPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if(status == -1){
@@ -129,7 +129,6 @@ bool FileDatabase::createNewsgroup(string name){
       exit(1);
     }
   }
-  std::cout << "line 135 " << NEWSGROUP_ID << std::endl;
   return true;
 }
 
