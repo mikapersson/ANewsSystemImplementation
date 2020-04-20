@@ -5,7 +5,8 @@
 #include "messagehandler.h"
 #include "protocol.h"
 
-#include "InMemDatabase.h" //InMemDatabase.h inkluderar de båda ritkiga klasserna
+#include "FileDatabase.h" 
+#include "InMemDataBase.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -17,19 +18,25 @@ using std::endl;
 using std::endl;
 
 Server init(int argc, char* argv[]);
-void listNG(InMemDatabase& db, MessageHandler& mh);
-void createNG(InMemDatabase& db, MessageHandler& mh);
-void deleteNG(InMemDatabase& db, MessageHandler& mh);
-void listArt(InMemDatabase& db, MessageHandler& mh);
-void createArt(InMemDatabase& db, MessageHandler& mh);
-void deleteArt(InMemDatabase& db, MessageHandler& mh);
-void getArt(InMemDatabase& db, MessageHandler& mh);
+void listNG(Database& db, MessageHandler& mh);
+void createNG(Database& db, MessageHandler& mh);
+void deleteNG(Database& db, MessageHandler& mh);
+void listArt(Database& db, MessageHandler& mh);
+void createArt(Database& db, MessageHandler& mh);
+void deleteArt(Database& db, MessageHandler& mh);
+void getArt(Database& db, MessageHandler& mh);
 
 
 int main(int argc, char* argv[]){
     Server server = init(argc, argv);
 
-    InMemDatabase db;
+    bool inmemdb = true;
+    if(inmemdb){  // using in-memory database
+        InMemDatabase db;
+    } else {      // using disk version database
+        FileDatabase db;
+    }
+    
     std::cout << "Server started successfully, waiting for connection..." <<std::endl;
     while(true){
         auto conn = server.waitForActivity();
@@ -113,7 +120,7 @@ Server init(int argc, char* argv[]){
         return server;
 }
 
-void listNG(InMemDatabase& db, MessageHandler& mh){
+void listNG(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_LIST_NG);
     auto ngList = db.listNewsgroups();
     mh.send_int_parameter(ngList.size());
@@ -125,7 +132,7 @@ void listNG(InMemDatabase& db, MessageHandler& mh){
     }
 }
 
-void createNG(InMemDatabase& db, MessageHandler& mh){
+void createNG(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_CREATE_NG);
 
     if(db.createNewsgroup(mh.rec_string_parameter())){
@@ -136,7 +143,7 @@ void createNG(InMemDatabase& db, MessageHandler& mh){
     }
 }
 
-void deleteNG(InMemDatabase& db, MessageHandler& mh){
+void deleteNG(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_DELETE_NG);
     if(db.deleteNewsgroup(mh.rec_int_parameter())){
         mh.send_anscode(Protocol::ANS_ACK);
@@ -146,7 +153,7 @@ void deleteNG(InMemDatabase& db, MessageHandler& mh){
     }
 }
 
-void listArt(InMemDatabase& db, MessageHandler& mh){
+void listArt(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_LIST_ART);
 
     auto ngID = mh.rec_int_parameter();  //sent in newsgroup ID
@@ -165,7 +172,7 @@ void listArt(InMemDatabase& db, MessageHandler& mh){
 
 }
 
-void createArt(InMemDatabase& db, MessageHandler& mh){
+void createArt(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_CREATE_ART);
     auto grID = mh.rec_int_parameter();
     auto title = mh.rec_string_parameter();
@@ -180,7 +187,7 @@ void createArt(InMemDatabase& db, MessageHandler& mh){
     }
 }
 
-void deleteArt(InMemDatabase& db, MessageHandler& mh){
+void deleteArt(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_DELETE_ART);
     auto grID = mh.rec_int_parameter();
     auto artID = mh.rec_int_parameter();
@@ -200,7 +207,7 @@ void deleteArt(InMemDatabase& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_ACK);
 }
 
-void getArt(InMemDatabase& db, MessageHandler& mh){
+void getArt(Database& db, MessageHandler& mh){
     mh.send_anscode(Protocol::ANS_GET_ART);
     auto grID = mh.rec_int_parameter();
     auto artID = mh.rec_int_parameter();
