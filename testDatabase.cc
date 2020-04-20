@@ -48,10 +48,22 @@ int main(int argc, char *argv[]){
   }
   */
 
- //MIKA TESTAR
-  FileDatabase database;
-  cout << "Created FileDatabase object" << endl;
+//MIKA TESTAR
+cout << "Create FileDatabase object\n" << endl;
+FileDatabase database;
 
-  //auto ngList = database.listNewsgroups();
+database.createNewsgroup("first-NG");
+database.createNewsgroup("second-NG");
+database.createNewsgroup("second-NG");
+database.createNewsgroup("third-NG");
+  
+
+cout << "DELETE NON-EXISTENT NEWSGROUP" << endl;
+auto del = database.deleteNewsgroup(10);
+cout << del << endl;
+
+cout << "DELETE EXISTENT NEWSGROUP" << endl;
+auto del2 = database.deleteNewsgroup(2);
+cout << del2 << endl;
 
 }

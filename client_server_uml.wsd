@@ -1,0 +1,42 @@
+@startuml A Newsserver Implementation
+
+actor user
+
+participant newsclient
+participant connection
+participant MessageHandler
+participant connectionclosedexception
+participant Protocol 
+participant server
+participant newsserver
+
+database Database
+database InMemDatabase
+database FileDatabase 
+
+
+user <-> newsclient
+
+newsclient <-> connection
+newsclient <-> MessageHandler
+newsclient <-> connectionclosedexception
+newsclient <-> Protocol
+newsclient <-> newsserver
+
+MessageHandler <-> connection
+MessageHandler <-> connectionclosedexception
+MessageHandler <-> Protocol
+
+newsserver <-> connection
+newsserver <-> MessageHandler
+newsserver <-> connectionclosedexception
+newsserver <-> Protocol
+newsserver <-> server
+newsserver <-> Database
+
+InMemDatabase <-> Database
+FileDatabase <-> Database
+
+server -> connection
+
+@enduml

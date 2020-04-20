@@ -24,11 +24,13 @@ FileDatabase::FileDatabase(){
 
   DIR* dir = nullptr;
   struct dirent* ent;
+  NEWSGROUP_ID = -1;  // start from -1 because we don't want to count manifest-file
 
   if((dir = opendir(root)) != nullptr){
     while((ent = readdir(dir)) != nullptr){
-      //std::cout << "File: " << ent->d_name <<std::endl;
+      ++NEWSGROUP_ID;
     }
+    NEWSGROUP_ID = NEWSGROUP_ID - 2;  // remove counts for '.' and '..'
   }else{
       std::cout << "No existing database found. Creating new...\n";
       int status = mkdir(root, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -39,16 +41,14 @@ FileDatabase::FileDatabase(){
         exit(1);
       }else{
         // std::cout << "Successfully created root directory" << std::endl;
+        NEWSGROUP_ID = 0;  // +1 from manifest
       }
   }
   closedir(dir);
 
-  std::ofstream manifest("./Database/manifest" , std::ofstream::app); // list of Newsgroups
+  std::ofstream manifest(manifestPath , std::ofstream::app); // list of Newsgroups
 
   manifest.close();
-  // Kan inte ha en variable med newsgroup id måste läsa in antal rader i manifest
-  NEWSGROUP_ID = 0;
-
 }
 
 FileDatabase::~FileDatabase(){
@@ -59,7 +59,7 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
   std::vector<Newsgroup> ngs;
   std::vector<Article> tmpA;
 
-  ifstream manifest("./Database/manifest");
+  ifstream manifest(manifestPath);
   if(!manifest.good()){
     std::cerr << "Error opening manifest file!" << std::endl;
     exit(1);
@@ -83,8 +83,8 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
 }
 
 
-bool FileDatabase::createNewsgroup(string name){
-  ifstream in_manifest("./Database/manifest");
+bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any blank spaces
+  ifstream in_manifest(manifestPath);
   if(!in_manifest){
     std::cout << "Unable to open manifest file in CreateNewsgroup." << std::endl;
     exit(1);
@@ -100,28 +100,32 @@ bool FileDatabase::createNewsgroup(string name){
     }
   }
   in_manifest.close();
+<<<<<<< HEAD
   */
-  ofstream out_manifest("./Database/manifest", std::ofstream::app);
+
+
+
+  ofstream out_manifest(manifestPath, std::ofstream::app);
+
   if(!out_manifest){
     std::cout << "An error occurred while opening manifest." << std::endl;
     exit(1);
   }
 
-  NEWSGROUP_ID++;
-  // Structure of manifest file
-  // [Newsgroup name] [newsgroup ID] [article counter]
-
-  out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
-  out_manifest.close();
-
   struct stat sb;
-  char dirPath[512] = "./Database/";
+  char dirPath[512] = "./FileDatabase/";
   strcat(dirPath, name.c_str());
 
   if(stat(dirPath, &sb) == 0){ // Error should be no file with that name
-    // Delete that file
     return false;
   }
+
+  // Structure of manifest file:
+  // [Newsgroup name] [newsgroup ID] [article counter]
+  ++NEWSGROUP_ID;
+
+  out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
+  out_manifest.close();
 
   if(!S_ISDIR(sb.st_mode)){
     int status = mkdir(dirPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -129,8 +133,7 @@ bool FileDatabase::createNewsgroup(string name){
       std::cout << "An error occurred while creating newsgroup directory." <<std::endl;
       exit(1);
     }
-}
-
+  }
   return true;
 }
 
@@ -140,7 +143,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   if(!ngExists(ng_ID))
     return false;
 
-  std::fstream manifest("./Database/manifest");
+  std::fstream manifest(manifestPath);
 
   if(!manifest){
     // Error opening manifest
@@ -177,15 +180,17 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   manifest.seekg(0);
   manifest.read(contents1, pos1);
   manifest.close();
-  manifest.open("./Database/manifest", std::fstream::out | std::fstream::trunc);
+  manifest.open(manifestPath, std::fstream::out | std::fstream::trunc);
 
   manifest.write(contents1 , pos1); // Content before
+
   manifest.put('\n');
   manifest.write(contents2, filelength - pos2); // content after
+
   manifest.close();
 
   // remove newsgroup line from manifest
-  char path[512] = "./Database/";
+  char path[512] = "./FileDatabase/";
   strcat(path, name.c_str());
 
   // remove folder
@@ -358,7 +363,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
 
 // Increase article counter for Newsgroup with ID with one in manifest file
 void FileDatabase::increaseArtCounter(unsigned ID){
-  std::fstream file("./Database/manifest");
+  std::fstream file(manifestPath);
 
   if(!file){
     std::cout << "Unable to open manifest file in increaseArtCounter."<< std::endl;
@@ -497,7 +502,7 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
 
 bool FileDatabase::ngExists(unsigned ng_ID){
 
-  std::ifstream manifest("./Database/manifest");
+  std::ifstream manifest(manifestPath);
 
   if(!manifest){
     std::cout << "Error in ngExists. Unable to open manifest." << std::endl;

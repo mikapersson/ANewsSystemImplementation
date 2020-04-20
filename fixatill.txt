@@ -1,3 +1,3 @@
-- går att göra ny newsgroup även om manifest-filen inte finns i databasen
-
-- 
+- kan skapa NG med samma ID och namn
+- kan ta bort NG som inte finns
+- vad säger attributet tmpNgName?
