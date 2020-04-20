@@ -1,9 +1,3 @@
+- kan skapa NG med samma ID och namn
+- kan ta bort NG som inte finns
 - vad säger attributet tmpNgName?
-
-ON NON-EXISTENT NEWSGROUP:
-- deleteNG
-- listArticles
-- createArticle
-- deleteArticle
-- getArticle
-- ngExists

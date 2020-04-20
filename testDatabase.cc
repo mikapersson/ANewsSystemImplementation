@@ -48,13 +48,15 @@ int main(int argc, char *argv[]){
   }
   */
 
- //MIKA TESTAR
- cout << "Create FileDatabase object\n" << endl;
+//MIKA TESTAR
+cout << "Create FileDatabase object\n" << endl;
 FileDatabase database;
+
+database.createNewsgroup("first NG");
   
 
-cout << "DELETE NON-EXISTENT NEWSGROUP" << endl;
+/*cout << "DELETE NON-EXISTENT NEWSGROUP" << endl;
 auto del = database.deleteNewsgroup(10);
-cout << del << endl;
+cout << del << endl;*/
 
 }

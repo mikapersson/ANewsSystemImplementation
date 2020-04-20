@@ -24,11 +24,13 @@ FileDatabase::FileDatabase(){
 
   DIR* dir = nullptr;
   struct dirent* ent;
+  NEWSGROUP_ID = -1;  // start from -1 because we don't want to count manifest-file
 
   if((dir = opendir(root)) != nullptr){
     while((ent = readdir(dir)) != nullptr){
-      //std::cout << "File: " << ent->d_name <<std::endl;
+      ++NEWSGROUP_ID;
     }
+    NEWSGROUP_ID = NEWSGROUP_ID - 2;  // remove counts for '.' and '..'
   }else{
       std::cout << "No existing database found. Creating new...\n";
       int status = mkdir(root, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -39,6 +41,7 @@ FileDatabase::FileDatabase(){
         exit(1);
       }else{
         // std::cout << "Successfully created root directory" << std::endl;
+        NEWSGROUP_ID = 0;  // +1 from manifest
       }
   }
   closedir(dir);
@@ -46,9 +49,6 @@ FileDatabase::FileDatabase(){
   std::ofstream manifest(manifestPath , std::ofstream::app); // list of Newsgroups
 
   manifest.close();
-  // Kan inte ha en variable med newsgroup id måste läsa in antal rader i manifest
-  NEWSGROUP_ID = 0;
-
 }
 
 FileDatabase::~FileDatabase(){
@@ -84,7 +84,7 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
 
 
 bool FileDatabase::createNewsgroup(string name){
-  ifstream in_manifest("./Database/manifest");
+  ifstream in_manifest(manifestPath);
   if(!in_manifest){
     std::cout << "Unable to open manifest file in CreateNewsgroup." << std::endl;
     exit(1);
@@ -99,21 +99,22 @@ bool FileDatabase::createNewsgroup(string name){
   }
   in_manifest.close();
 
-  ofstream out_manifest("./Database/manifest", std::ofstream::app);
+  ofstream out_manifest(manifestPath, std::ofstream::app);
   if(!out_manifest){
     std::cout << "An error occurred while opening manifest." << std::endl;
     exit(1);
   }
 
-  NEWSGROUP_ID++;
-  // Structure of manifest file
+  ++NEWSGROUP_ID;
+
+  // Structure of manifest file:
   // [Newsgroup name] [newsgroup ID] [article counter]
 
   out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
   out_manifest.close();
 
   struct stat sb;
-  char dirPath[512] = "./Database/";
+  char dirPath[512] = "./FileDatabase/";
   strcat(dirPath, name.c_str());
 
   if(stat(dirPath, &sb) == 0){ // Error should be no file with that name
@@ -127,8 +128,8 @@ bool FileDatabase::createNewsgroup(string name){
       std::cout << "An error occurred while creating newsgroup directory." <<std::endl;
       exit(1);
     }
-}
-
+  }
+  std::cout << "line 135 " << NEWSGROUP_ID << std::endl;
   return true;
 }
 
@@ -166,7 +167,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   }
 
   name = tmpName;
-  long pos2 = manifest.tellg();  // vad händer på dessa raderna?
+  long pos2 = manifest.tellg();  // vad händer här
   manifest.seekg(pos2  + 1);
   manifest.read(contents2, filelength -pos2);
   manifest.clear();
@@ -180,7 +181,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   manifest.close();
 
   // remove newsgroup line from manifest
-  char path[512] = "./Database/";
+  char path[512] = "./FileDatabase/";
   strcat(path, name.c_str());
 
   // remove folder
