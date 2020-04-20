@@ -34,8 +34,8 @@ newsserver -> Protocol
 newsserver -> server
 newsserver -> Database
 
-Database -> InMemDatabase
-Database -> FileDatabase
+InMemDatabase -> Database
+FileDatabase -> Database
 
 server -> connection
 
