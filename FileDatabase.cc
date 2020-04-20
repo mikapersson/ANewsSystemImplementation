@@ -90,7 +90,6 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
     exit(1);
   }
 
-  /*
   std::string tmpName, tmpId, artCount;
 
   while(in_manifest >> tmpName >> tmpId >> artCount){
@@ -100,8 +99,6 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
     }
   }
   in_manifest.close();
-<<<<<<< HEAD
-  */
 
 
 
@@ -166,7 +163,6 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
       break;
     }else{
       pos1 = manifest.tellg();
-      ++pos1;
     }
   }
   if(tmpID != ng_ID){ // Newsgroup not found
