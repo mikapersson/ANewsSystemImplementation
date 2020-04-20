@@ -56,11 +56,6 @@ database.createNewsgroup("first-NG");
 database.createNewsgroup("second-NG");
 database.createNewsgroup("second-NG");
 database.createNewsgroup("third-NG");
-  
-
-cout << "DELETE NON-EXISTENT NEWSGROUP" << endl;
-auto del = database.deleteNewsgroup(10);
-cout << del << endl;
 
 cout << "DELETE EXISTENT NEWSGROUP" << endl;
 auto del2 = database.deleteNewsgroup(2);
