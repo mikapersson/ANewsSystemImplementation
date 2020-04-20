@@ -89,6 +89,8 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
     std::cout << "Unable to open manifest file in CreateNewsgroup." << std::endl;
     exit(1);
   }
+
+  /*
   std::string tmpName, tmpId, artCount;
 
   while(in_manifest >> tmpName >> tmpId >> artCount){
@@ -98,8 +100,13 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
     }
   }
   in_manifest.close();
+<<<<<<< HEAD
+  */
+
+
 
   ofstream out_manifest(manifestPath, std::ofstream::app);
+
   if(!out_manifest){
     std::cout << "An error occurred while opening manifest." << std::endl;
     exit(1);
@@ -133,6 +140,8 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
 
 bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
 
+  if(!ngExists(ng_ID))
+    return false;
 
   std::fstream manifest(manifestPath);
 
@@ -165,7 +174,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   }
 
   name = tmpName;
-  long pos2 = manifest.tellg();  
+  long pos2 = manifest.tellg();
   manifest.seekg(pos2  + 1);
   manifest.read(contents2, filelength -pos2);
   manifest.clear();
@@ -175,7 +184,10 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   manifest.open(manifestPath, std::fstream::out | std::fstream::trunc);
 
   manifest.write(contents1 , pos1); // Content before
-  manifest.write(contents2, filelength - pos2 - 1); // content after
+
+  manifest.put('\n');
+  manifest.write(contents2, filelength - pos2); // content after
+
   manifest.close();
 
   // remove newsgroup line from manifest
@@ -185,8 +197,8 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   // remove folder
   int status = removeNewsgroup(path);
   if(status == -1){
-    std::cout << "An error occured in delete newsgroup" << std::endl;
-    std::cout << "Errno: \t" << strerror(errno) << std::endl;
+    std::cout << "An error occured while deleting newsgroup:\t"
+              << strerror(errno) << std::endl;
     exit(1);
   }
 
@@ -352,7 +364,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
 
 // Increase article counter for Newsgroup with ID with one in manifest file
 void FileDatabase::increaseArtCounter(unsigned ID){
-  std::fstream file("./Database/manifest");
+  std::fstream file(manifestPath);
 
   if(!file){
     std::cout << "Unable to open manifest file in increaseArtCounter."<< std::endl;
@@ -528,22 +540,3 @@ bool FileDatabase::artExists(unsigned ng_ID, unsigned art_ID){
   struct stat sb;
   return (stat(filepath, &sb) == 0); // no error, if == -1 then could check errno
 }
-/*
-
-From previous version of artExist
-std::ifstream manifest("./Database/manifest");
-if(!manifest){
-  std::cout << "Error in ngExists. Unable to open manifest." << std::endl;
-  exit(1);
-}
-unsigned tmpID, tmpArtCounter;
-std::string tmpName;
-while(!manifest.eof()){
-  manifest >> tmpName >> tmpID >> tmpArtCounter;
-  if(tmpID == ng_ID)
-    break;
-}
-manifest.close();
-if(tmpID != ng_ID)
-  return false;
-*/
