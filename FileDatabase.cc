@@ -27,10 +27,10 @@ FileDatabase::FileDatabase(){
   NEWSGROUP_ID = -1;  // start from -1 because we don't want to count manifest-file
 
   if((dir = opendir(root)) != nullptr){
-    std::ifstream in_manifest(manifestPath);
-    // we want to determine the current NEWSGROUP_ID in the existing database
-    
-    in_manifest.close();
+    while((ent = readdir(dir)) != nullptr){
+      ++NEWSGROUP_ID;
+    }
+    NEWSGROUP_ID = NEWSGROUP_ID - 2;  // remove counts for '.' and '..'
   }else{
       std::cout << "No existing database found. Creating new...\n";
       int status = mkdir(root, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
