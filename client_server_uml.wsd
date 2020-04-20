@@ -15,13 +15,13 @@ database InMemDatabase
 database FileDatabase 
 
 
-user -> newsclient: Something
+user -> newsclient
 
-newsclient -> connection: X
+newsclient -> connection
 newsclient -> MessageHandler
 newsclient -> connectionclosedexception
 newsclient -> Protocol
-newsclient -> newsserver: something
+newsclient -> newsserver
 
 MessageHandler -> connection
 MessageHandler -> connectionclosedexception
