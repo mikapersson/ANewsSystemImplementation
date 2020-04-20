@@ -61,4 +61,7 @@ cout << "DELETE EXISTENT NEWSGROUP" << endl;
 auto del2 = database.deleteNewsgroup(2);
 cout << del2 << endl;
 
+database.deleteNewsgroup(1);
+database.deleteNewsgroup(3);
+
 }

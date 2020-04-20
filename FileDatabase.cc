@@ -27,10 +27,25 @@ FileDatabase::FileDatabase(){
   NEWSGROUP_ID = -1;  // start from -1 because we don't want to count manifest-file
 
   if((dir = opendir(root)) != nullptr){
+    /*
     while((ent = readdir(dir)) != nullptr){
       ++NEWSGROUP_ID;
     }
-    NEWSGROUP_ID = NEWSGROUP_ID - 2;  // remove counts for '.' and '..'
+    NEWSGROUP_ID = NEWSGROUP_ID - 2;  // remove counts for '.' and '..'*/
+    std::fstream manifest_in(manifestPath);  // the database has a file 'manifest'
+    string tempNG;
+    unsigned id, tempArtCount;
+    if(manifest_in.is_open()){
+        while(manifest_in){
+            manifest_in >> tempNG >> id >> tempArtCount;
+        }
+        NEWSGROUP_ID = id;
+        manifest_in.close();
+
+    } else {
+        std::cout << "Problem opening testfile" << std::endl;
+    }
+
   }else{
       std::cout << "No existing database found. Creating new...\n";
       int status = mkdir(root, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -49,6 +64,7 @@ FileDatabase::FileDatabase(){
   std::ofstream manifest(manifestPath , std::ofstream::app); // list of Newsgroups
 
   manifest.close();
+  std::cout << "NEWSGROUP_ID = " << NEWSGROUP_ID << std::endl;
 }
 
 FileDatabase::~FileDatabase(){
@@ -182,7 +198,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   manifest.write(contents1 , pos1); // Content before
 
   manifest.put('\n');
-  manifest.write(contents2, filelength - pos2); // content after
+  manifest.write(contents2, filelength - pos2 - 1); // content after
 
   manifest.close();
 
