@@ -243,10 +243,10 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   std::vector<Article> arts;
   DIR *dir = nullptr;
   struct dirent* ent = nullptr;
-  std::cout <<"lisArtid:\t"<<  ng_ID <<std::endl;
+
   ifstream article;
 
-  ifstream manifest("./Database/manifest");
+  ifstream manifest(manifestPath);
   if(!manifest.good()){
     std::cout << "An error occurred when opening manifest file \n";
     exit(1);
@@ -264,7 +264,6 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   strcat(dirLocation, name.c_str());
   dirLocation[strlen(dirLocation) ] = '\0';
   dirLocation[strlen(dirLocation) ] = '/';
-  std::cout << "Dirlocation:\t" << dirLocation <<  ""<< std::endl;
 
   if((dir = opendir(dirLocation)) == nullptr){
     std::cerr << "Error opening newsgroup folder in listArticles:\t" <<  std::strerror(errno) <<std::endl;
@@ -315,7 +314,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
 // Returns false if the newsgroup does not exist
 bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, string text){
 
-  std::ifstream in_manifest("./Database/manifest");
+  std::ifstream in_manifest(manifestPath);
   if(!in_manifest){
     std::cout << "An error occurred while opening manifest file in createArticle." <<std::endl;
     exit(1);
@@ -421,7 +420,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
 
 bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
 
-  std::ifstream manifest("./Database/manifest");
+  std::ifstream manifest(manifestPath);
   if(!manifest){
     std::cout << "Error in deleteArticle. Unable to open manifest." << std::endl;
     exit(1);
