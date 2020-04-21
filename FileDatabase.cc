@@ -24,13 +24,22 @@ FileDatabase::FileDatabase(){
 
   DIR* dir = nullptr;
   struct dirent* ent;
-  NEWSGROUP_ID = -1;  // start from -1 because we don't want to count manifest-file
 
   if((dir = opendir(root)) != nullptr){
-    while((ent = readdir(dir)) != nullptr){
-      ++NEWSGROUP_ID;
+    std::fstream manifest_in(manifestPath);  // the database has a file 'manifest'
+    string tempNG;
+    unsigned id, tempArtCount;
+    if(manifest_in.is_open()){
+        while(manifest_in){
+            manifest_in >> tempNG >> id >> tempArtCount;
+        }
+        NEWSGROUP_ID = id;
+        manifest_in.close();
+
+    } else {
+        std::cout << "Problem opening testfile" << std::endl;
     }
-    NEWSGROUP_ID = NEWSGROUP_ID - 2;  // remove counts for '.' and '..'
+
   }else{
       std::cout << "No existing database found. Creating new...\n";
       int status = mkdir(root, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -90,7 +99,6 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
     exit(1);
   }
 
-  /*
   std::string tmpName, tmpId, artCount;
 
   while(in_manifest >> tmpName >> tmpId >> artCount){
@@ -100,8 +108,6 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
     }
   }
   in_manifest.close();
-<<<<<<< HEAD
-  */
 
 
 
@@ -185,7 +191,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   manifest.write(contents1 , pos1); // Content before
 
   manifest.put('\n');
-  manifest.write(contents2, filelength - pos2); // content after
+  manifest.write(contents2, filelength - pos2 - 1); // content after
 
   manifest.close();
 
@@ -259,7 +265,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   }
   manifest.close();
 
-  char dirLocation[512] = "./Database/";
+  char dirLocation[512] = "./FileDatabase/";  //ROOT
   char filepath[512];
   strcat(dirLocation, name.c_str());
   dirLocation[strlen(dirLocation) ] = '\0';
@@ -336,7 +342,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
   increaseArtCounter(ng_ID);
   artID++; // necessary to match increased Article count
 
-  char filePath[512] = "./Database/";
+  char filePath[512] = "./FileDatabase/";
   strcat(filePath, ngName.c_str());
   filePath[strlen(filePath)] = '/';
   std::string tmpArtID = std::to_string(artID);
@@ -440,7 +446,7 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
     return false;
   }
 
-  char path[512] = "./Database/";
+  char path[512] = "./FileDatabase/";
   strcat(path , tmpName.c_str());
   path[strlen(path)] = '/';
   string tmpArtID = std::to_string(art_ID);
@@ -469,7 +475,7 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
   }
 
 
-  char path[512] = "./Database/";
+  char path[512] = "./FileDatabase/";
   strcat(path , tmpNgName.c_str());
   path[strlen(path)] = '/';
   string tmpArtID = std::to_string(art_ID);
@@ -523,7 +529,7 @@ bool FileDatabase::ngExists(unsigned ng_ID){
 // Will not function properly if ngExists has not been run
 bool FileDatabase::artExists(unsigned ng_ID, unsigned art_ID){
 
-  char filepath[1024] = "./Database/";
+  char filepath[1024] = "./FileDatabase/";
 
   if(!ngExists(ng_ID)){
     return false;

@@ -37,6 +37,6 @@ newsserver <-> Database
 InMemDatabase <-> Database
 FileDatabase <-> Database
 
-server -> connection
+server <-> connection
 
 @enduml

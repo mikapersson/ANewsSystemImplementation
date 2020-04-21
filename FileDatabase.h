@@ -51,7 +51,7 @@ public:
 
 private:
   std::string tmpNgName; // is set by ngExists function
-  char root[15] = "./FileDatabase";
+  char root[16] = "./FileDatabase";  // keep '/' at the end?
   char manifestPath[24] = "./FileDatabase/manifest";
   unsigned NEWSGROUP_ID;
 };

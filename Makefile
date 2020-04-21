@@ -26,7 +26,7 @@ PROGS = newsserver newsclient testDatabase diskserver td
 all: $(PROGS)
 
 #Targets
-newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o
+newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o FileDatabase.o
 newsclient: connection.o MessageHandler.o newsclient.o
 diskserver: diskserver.o MessageHandler.o connection.o FileDatabase.o server.o
 
