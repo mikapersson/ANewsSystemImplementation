@@ -249,7 +249,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   std::vector<Article> arts;
   DIR *dir = nullptr;
   struct dirent* ent = nullptr;
-  std::cout <<"lisArtid:\t"<<  ng_ID <<std::endl;
+  //std::cout <<"lisArtid:\t"<<  ng_ID <<std::endl;
   ifstream article;
 
   ifstream manifest(manifestPath);
@@ -270,7 +270,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   strcat(dirLocation, name.c_str());
   dirLocation[strlen(dirLocation) ] = '\0';
   dirLocation[strlen(dirLocation) ] = '/';
-  std::cout << "Dirlocation:\t" << dirLocation <<  ""<< std::endl;
+  //std::cout << "Dirlocation:\t" << dirLocation <<  ""<< std::endl;
 
   if((dir = opendir(dirLocation)) == nullptr){
     std::cerr << "Error opening newsgroup folder in listArticles:\t" <<  std::strerror(errno) <<std::endl;

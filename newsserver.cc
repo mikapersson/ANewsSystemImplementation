@@ -29,13 +29,13 @@ void getArt(Database& db, MessageHandler& mh);
 
 int main(int argc, char* argv[]){
     Server server = init(argc, argv);
-
-    bool inmemdb = true;
+    FileDatabase db;
+    /*bool inmemdb = true;
     if(inmemdb){  // using in-memory database
         InMemDatabase db;
     } else {      // using disk version database
         FileDatabase db;
-    }
+    }*/
     
     std::cout << "Server started successfully, waiting for connection..." <<std::endl;
     while(true){
