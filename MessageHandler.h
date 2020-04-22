@@ -21,5 +21,5 @@ class MessageHandler { //message handling between client and server
 private:
 	std::shared_ptr<Connection> conn;  //anslutingen
 	unsigned char rec_byte();  //read byte from client to server
-  void send_byte(const char code);  //skicka byte
+    void send_byte(const char code);  //skicka byte
 };
