@@ -1,4 +1,4 @@
-CPP 2005 Project, Communication Classes
+CPP 2020 Project, Communication Classes
 ---------------------------------------
 
 - This directory contains the communication classes Connection and Server,
