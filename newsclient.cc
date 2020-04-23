@@ -19,7 +19,7 @@ using std::cout;
 
 string validCommands[] = {"read" , "list" , "delete", "create", "exit" , "help", "clear"};
 
-const unsigned INPUT_BUFFER = 2048; // större?
+const unsigned INPUT_BUFFER = 10000;
 
 
 Connection init(int argc, char *argv[]){
@@ -118,13 +118,13 @@ void listNewsgroups(MessageHandler& mh){
   }
   cout << "Available newsgroups:";
   if(ngs == 0)
-    cout << "\tnone" <<std::endl;
+    cout << "\tnone." <<std::endl;
   else
     cout << "\n";
   for(auto& p: result){
     cout << "\t" << p.first << ". " << p.second << "\n";
   }
-  mh.rec_cmd(); // should be ANS_END Check?
+  mh.rec_cmd();
 
 }
 // get the index:th int from the string p,
@@ -161,7 +161,7 @@ void read(MessageHandler& mh, string parameters){
   mh.send_int_parameter(art_ID);
   mh.send_anscode(Protocol::COM_END);
 
-  mh.rec_cmd(); // Should be ANS_GET_ART check?
+  mh.rec_cmd();
   Protocol reply = mh.rec_cmd();
   if(reply == Protocol::ANS_NAK){
     reply = mh.rec_cmd();
@@ -172,14 +172,14 @@ void read(MessageHandler& mh, string parameters){
       cout << "No article with ID:\t"  << ng_ID << ". In newsgroup:\t "<< ng_ID<< std::endl;
 
     }
-    mh.rec_cmd(); // should be ANS_END
+    mh.rec_cmd(); // ANS_END
     return;
   }
   // Found article
   string title = mh.rec_string_parameter();
   string author = mh.rec_string_parameter();
   string text = mh.rec_string_parameter();
-  mh.rec_cmd(); // should be ANS_END
+  mh.rec_cmd();// ANS_END
   cout << "\t" << title << "\t|\tBy: " << author <<"\n" <<std::endl;
   cout << text <<std::endl;
 }
@@ -237,10 +237,10 @@ void createNg(MessageHandler& mh, string parameters){
   mh.send_string_parameter(title);
   mh.send_anscode(Protocol::COM_END);
 
-  mh.rec_cmd(); // Should be ANS_CREATE_NG
+  mh.rec_cmd(); // ANS_CREATE_NG
   Protocol r = mh.rec_cmd();
   if(r == Protocol::ANS_NAK){
-    mh.rec_cmd(); // should be ERR_NG_ALREADY_EXISTS
+    mh.rec_cmd(); // ERR_NG_ALREADY_EXISTS
     cout << "A newsgroup named " << title << " already exists." <<std::endl;
   }else{ // ANS_ACK
     cout << "Newsgroup created." << std::endl;
@@ -274,17 +274,17 @@ void createArt(MessageHandler &mh, string parameters, int ng_ID){
     mh.send_string_parameter(s);
   mh.send_anscode(Protocol::COM_END);
 
-  mh.rec_cmd(); // SHould be ANS_CREATE_ART check?
+  mh.rec_cmd(); // ANS_CREATE_ART
   Protocol p = mh.rec_cmd();
 
   if(p == Protocol::ANS_NAK){
-    mh.rec_cmd(); // should be ERR_NG_DOES_NOT_EXIST
+    mh.rec_cmd(); // ERR_NG_DOES_NOT_EXIST
     cout << "No newsgroup with ID:\t" << ng_ID << "."<< std::endl;
   }else{
     cout << "Article created." <<std::endl;
   }
 
-  mh.rec_cmd();
+  mh.rec_cmd(); // ANS_END
 
 }
 
@@ -306,7 +306,7 @@ void deleteArt(MessageHandler& mh, int ng_ID, int art_ID){
   mh.send_int_parameter(art_ID);
   mh.send_anscode(Protocol::COM_END);
 
-  mh.rec_cmd(); // Should be ANS_DELETE_ART
+  mh.rec_cmd(); // ANS_DELETE_ART
   Protocol r = mh.rec_cmd();
   if(r == Protocol::ANS_NAK){
     Protocol r = mh.rec_cmd();
@@ -319,7 +319,7 @@ void deleteArt(MessageHandler& mh, int ng_ID, int art_ID){
     cout << "Article deleted." << std::endl;
   }
 
-  mh.rec_cmd(); // should be ANS_END
+  mh.rec_cmd(); // ANS_END
 }
 // from main ->deleteC -> deleteNG
 void deleteNG(MessageHandler& mh, int ng_ID){
@@ -327,16 +327,16 @@ void deleteNG(MessageHandler& mh, int ng_ID){
   mh.send_int_parameter(ng_ID);
   mh.send_anscode(Protocol::COM_END);
 
-  mh.rec_cmd(); // SHould be ANS_DELETE_NG
+  mh.rec_cmd(); // ANS_DELETE_NG
 
   Protocol r = mh.rec_cmd();
   if(r == Protocol::ANS_NAK){
-    mh.rec_cmd(); // Should be ERR_NG_DOES_NOT_EXIST
+    mh.rec_cmd(); // ERR_NG_DOES_NOT_EXIST
     cout << "Newsgroup does not exist." <<std::endl;
   }else{ // ANS_ACK
     cout << "Newsgroup deleted." << std::endl;
   }
-  mh.rec_cmd(); // should be ANS_END
+  mh.rec_cmd(); // ANS_END
 }
 
 void deleteC(MessageHandler &mh, string parameters){
@@ -420,5 +420,5 @@ int main(int argc, char *argv[]){
   }
   cout << "Exiting newsclient.." << std::endl;
 
-  exit(0);
+  return 0;
 }

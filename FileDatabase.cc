@@ -23,10 +23,10 @@ using std::string;
 FileDatabase::FileDatabase(){
 
   DIR* dir = nullptr;
-  struct dirent* ent;
+
 
   if((dir = opendir(root)) != nullptr){
-    std::fstream manifest_in(manifestPath);  // the database has a file 'manifest'
+    std::fstream manifest_in(manifestPath);  // the database has a file 'manifest' used to keep track of newsGroups
     string tempNG;
     unsigned id, tempArtCount;
     if(manifest_in.is_open()){
@@ -37,11 +37,11 @@ FileDatabase::FileDatabase(){
         manifest_in.close();
 
     } else {
-        std::cout << "Problem opening testfile" << std::endl;
+        std::cout << "Problem opening manifestfile." << std::endl;
     }
 
   }else{
-      std::cout << "No existing database found. Creating new...\n";
+      std::cout << "No existing database found. Creating new.\n";
       int status = mkdir(root, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
       if(status == -1 ){

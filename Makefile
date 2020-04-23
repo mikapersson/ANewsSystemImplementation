@@ -21,17 +21,17 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = newsserver newsclient testDatabase diskserver td
+PROGS = newsclient inmemserver diskserver
 
 all: $(PROGS)
 
 #Targets
-newsserver: newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o FileDatabase.o
+inmemserver: inmemserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 newsclient: connection.o MessageHandler.o newsclient.o
 diskserver: diskserver.o MessageHandler.o connection.o FileDatabase.o server.o
 
-testDatabase: testDatabase.o FileDatabase.o
-td: td.o FileDatabase.o
+#testDatabase: testDatabase.o FileDatabase.o
+#td: td.o FileDatabase.o
 
 # Phony targets
 .PHONY: all clean distclean

@@ -1,11 +1,10 @@
-/* myserver.cc: sample server program */
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "server.h"
 #include "messagehandler.h"
 #include "protocol.h"
 
-#include "FileDatabase.h" 
+#include "FileDatabase.h"
 #include "InMemDataBase.h"
 
 #include <cstdlib>
@@ -29,13 +28,8 @@ void getArt(Database& db, MessageHandler& mh);
 
 int main(int argc, char* argv[]){
     Server server = init(argc, argv);
-    Database* db;
-    if(std::stoi(argv[2]) == 1){  // using in-memory database
-        db = new InMemDatabase();
-    } else {      // using disk version database
-        db = new FileDatabase();
-    }
-    
+    Database* db = new InMemDatabase();
+
     std::cout << "Server started successfully, waiting for connection..." <<std::endl;
     while(true){
         auto conn = server.waitForActivity();
@@ -95,7 +89,7 @@ int main(int argc, char* argv[]){
 
 Server init(int argc, char* argv[]){
         if (argc != 3) {
-                cerr << "Usage: <myserver> <port-number> <database-type (1 for in-memory, otherwise disk version)>" << endl;
+                cerr << "Usage: myserver <port-number> <database-type (1 for in-memory, otherwise disk version)>" << endl;
                 exit(1);
         }
 
