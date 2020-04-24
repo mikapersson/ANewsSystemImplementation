@@ -28,7 +28,7 @@ void getArt(Database& db, MessageHandler& mh);
 
 int main(int argc, char* argv[]){
     Server server = init(argc, argv);
-    Database* db = new InMemDatabase();
+    InMemDatabase db;
 
     std::cout << "Server started successfully, waiting for connection..." <<std::endl;
     while(true){
@@ -40,28 +40,28 @@ int main(int argc, char* argv[]){
                 auto received = mh.rec_cmd();
                 switch(received){
                     case Protocol::COM_LIST_NG :
-                      listNG(*db, mh);
+                      listNG(db, mh);
                       break;
                     case Protocol::COM_CREATE_NG :
-                      createNG(*db, mh);
+                      createNG(db, mh);
                       break;
                     case Protocol::COM_DELETE_NG :
-                      deleteNG(*db, mh);
+                      deleteNG(db, mh);
                       break;
                     case Protocol::COM_LIST_ART :
-                      listArt(*db, mh);
+                      listArt(db, mh);
                       break;
                     case Protocol::COM_CREATE_ART :
-                      createArt(*db, mh);
+                      createArt(db, mh);
                       break;
                     case Protocol::COM_DELETE_ART :
-                      deleteArt(*db, mh);
+                      deleteArt(db, mh);
                       break;
                     case Protocol::COM_GET_ART :
-                      getArt(*db, mh);
+                      getArt(db, mh);
                       break;
                     default:
-                      // If unknown command server should deregister client
+                      // If unknown command, server should deregister client
                       // and not reply with ANS_END
                       throw ConnectionClosedException();
                       break;
@@ -83,13 +83,12 @@ int main(int argc, char* argv[]){
         }
     }
 
-    delete db;
     return 0;
 }
 
 Server init(int argc, char* argv[]){
-        if (argc != 3) {
-                cerr << "Usage: myserver <port-number> <database-type (1 for in-memory, otherwise disk version)>" << endl;
+        if (argc != 2) {
+                cerr << "Usage: myserver <port-number>" << endl;
                 exit(1);
         }
 
@@ -97,11 +96,11 @@ Server init(int argc, char* argv[]){
         try {
                 port = std::stoi(argv[1]);
         } catch (std::exception& e) {
-                cerr << "Wrong format for port number. " << e.what() << endl;
+                cerr << "Wrong format for port number:\t" << e.what() << endl;
                 exit(2);
         }
         if( port > 65535 || port <= 0){
-          std::cout << "Invalid port number. Valid values: 0 < port < 65535. \n";
+          std::cerr << "Invalid port number. Valid values: 0 < port < 65535. \n";
           exit(4);
         }
 

@@ -22,7 +22,7 @@ string validCommands[] = {"read" , "list" , "delete", "create", "exit" , "help",
 const unsigned INPUT_BUFFER = 10000;
 
 
-Connection init(int argc, char *argv[]){
+Connection* init(int argc, char *argv[]){
 
   if(argc != 3){
     cout << "Usage: ./newsclient server port " << std::endl;
@@ -34,16 +34,16 @@ Connection init(int argc, char *argv[]){
   try{
     port = std::stoi(argv[2]);
   }catch(std::exception &e){
-    cout << "Invalid port number format: " << e.what() << std::endl;
+    cout << "Invalid port number format:\t" << e.what() << std::endl;
     exit(2);
   }
   if(0 > port || 65535 < port) {
     cout << "Invalid port number. Valid values: 0 < port < 65535" << std::endl;
     exit(3);
   }
-  Connection c = Connection(argv[1], port);
+  Connection* c = new Connection(argv[1], port);
 
-  if(!c.isConnected()){
+  if(!c->isConnected()){
     cout << "Unable to make connection..." << std::endl;
     exit(5);
   }
@@ -361,9 +361,9 @@ void deleteC(MessageHandler &mh, string parameters){
 
 int main(int argc, char *argv[]){
 
-  Connection conn = init(argc, argv);
+  Connection* conn = init(argc, argv);
   char cinput[INPUT_BUFFER];
-  MessageHandler mh(conn);
+  MessageHandler mh(*conn);
 
   bool running = true;
   string input;

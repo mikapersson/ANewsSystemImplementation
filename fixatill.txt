@@ -1,3 +1,0 @@
-- konstruktor: beräkna NEWSGROUP_ID från sista raden i 'manifest'
-
-- vad säger attributet tmpNgName?

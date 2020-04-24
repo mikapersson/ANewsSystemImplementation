@@ -23,15 +23,16 @@ LDFLAGS =   -g
 # Targets
 PROGS = newsclient inmemserver diskserver
 
-all: $(PROGS)
+all: libclientserver.a $(PROGS)
 
-#Targets
+libclientserver.a: server.o connection.o MessageHandler.o
+		ar rv libclientserver.a server.o connection.o MessageHandler.o
+		ranlib libclientserver.a
+
 inmemserver: inmemserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 newsclient: connection.o MessageHandler.o newsclient.o
 diskserver: diskserver.o MessageHandler.o connection.o FileDatabase.o server.o
 
-#testDatabase: testDatabase.o FileDatabase.o
-#td: td.o FileDatabase.o
 
 # Phony targets
 .PHONY: all clean distclean

@@ -41,7 +41,6 @@ FileDatabase::FileDatabase(){
     }
 
   }else{
-      std::cout << "No existing database found. Creating new.\n";
       int status = mkdir(root, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
       if(status == -1 ){
