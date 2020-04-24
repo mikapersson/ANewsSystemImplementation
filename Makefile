@@ -52,6 +52,7 @@ clean:
 
 distclean: clean
 	-rm -f $(SRC:.cc=.d)
+	rm -f libclientserver.a
 
 
 
