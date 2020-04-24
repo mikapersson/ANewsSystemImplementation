@@ -34,6 +34,13 @@ newsclient: connection.o MessageHandler.o newsclient.o
 diskserver: diskserver.o MessageHandler.o connection.o FileDatabase.o server.o
 
 
+install: inmemserver newsclient diskserver
+	cp -fv inmemserver newsclient diskserver ../bin
+
+clear:
+	rm -rfv FileDatabase
+	rm -rfv ../bin/FileDatabase
+
 # Phony targets
 .PHONY: all clean distclean
 
