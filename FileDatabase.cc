@@ -92,6 +92,8 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
 
 
 bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any blank spaces
+
+
   ifstream in_manifest(manifestPath);
   if(!in_manifest){
     std::cout << "Unable to open manifest file in CreateNewsgroup." << std::endl;
@@ -107,6 +109,7 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
     }
   }
   in_manifest.close();
+
 
 
 
@@ -129,7 +132,7 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
   // [Newsgroup name] [newsgroup ID] [article counter]
   ++NEWSGROUP_ID;
 
-  out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
+  out_manifest << name << "} " << NEWSGROUP_ID <<  " 0" << "\n";
   out_manifest.close();
 
   if(!S_ISDIR(sb.st_mode)){
@@ -519,18 +522,21 @@ bool FileDatabase::ngExists(unsigned ng_ID){
   while(manifest >> tmpName >> tmpID >> tmpArtCounter){
     if(tmpID == ng_ID)
       break;
+
 }
   manifest.close();
   tmpNgName = tmpName;
   return (tmpID == ng_ID);
 }
 
+
+
 // Will not function properly if ngExists has not been run
 bool FileDatabase::artExists(unsigned ng_ID, unsigned art_ID){
 
   char filepath[1024] = "./FileDatabase/";
 
-  if(!ngExists(ng_ID)){
+  if(!ngExists(ng_ID)){ // check if ng exist by id
     return false;
   }
 
