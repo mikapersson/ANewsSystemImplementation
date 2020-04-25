@@ -90,10 +90,10 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
   string tempRow;
   while(std::getline(manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
-
+    ngs.push_back(tempNG);
   }
 
-  /*
+  /*  MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   std::string ngName;
   unsigned id, artCounter;
 
@@ -126,9 +126,14 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
   while(std::getline(in_manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
     
+    if(tempNG.name == name){
+      in_manifest.close();
+      return false;
+    }
+
   }
 
-  /*
+  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   std::string tmpName, tmpId, artCount;
   while(in_manifest >> tmpName >> tmpId >> artCount){
     if(tmpName == name){ // Already exists
@@ -193,13 +198,26 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   char* contents2 = new char[filelength];
   manifest.seekg(0,manifest.beg);
 
-  string tempRow;
+  string tempRow, tmpName, name;
+  unsigned tempID = 0;
+  long pos1 = 0;
+
   while(std::getline(manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
-    
+
+    if(tempNG.newsGroup_ID == ng_ID){
+      tempID = ng_ID;
+      break;
+    }else{
+      pos1 = manifest.tellg();
+    }
   }
 
-  /*
+  if(tempID != ng_ID){ // Newsgroup not found
+    return false;
+  }
+
+  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   unsigned tmpID, tmpArtCounter;
   string tmpName,name;
 
@@ -297,32 +315,22 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
     exit(1);
   }
 
-  string tempRow;
+  string tempRow, name;
   while(std::getline(manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
-    
+    if(tempNG.newsGroup_ID == ng_ID){
+      name = tempNG.name;
+      break;
+    }
   }
 
-  /*
+  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   std::string name;
   unsigned ID,artID;
   while(manifest >> name >> ID >> artID){ // Detta inte testat för flera newsgroups
     if(ID == ng_ID)
       break;
-  }
-
-
-  /*
-  std::string s;
-  while(std::getline(manifest,s)){
-    Newsgroup ng = extract(s);
-    if(ng.id == ng_ID){
-
-    }
-  }
-  */
-
-
+  }*/
 
 
   manifest.close();
@@ -388,14 +396,19 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
     exit(1);
   }
 
-  std::string tempNG;
-  while(std::getline(in_manifest, tempNG)){
-    Newsgroup newsGroup = extract(tempNG);
-
+  std::string tempRow, ngName;
+  unsigned ng, artID;
+  while(std::getline(in_manifest, tempRow)){
+    Newsgroup tempNG = extract(tempRow);
+    if(tempNG.newsGroup_ID == ng_ID){  // found the correct newsgroup
+      ng = ng_ID;
+      artID = tempNG.article_IDs;
+      break;
+    }
 
   }
 
-  /*
+  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   std::string ngName;
   unsigned ng,artID;
   while(in_manifest >> ngName >> ng >> artID){
@@ -407,7 +420,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
   */
 
   in_manifest.close();
-  if(ng != ng_ID) // not found
+  if(ng != ng_ID) // newsgroup not found
     return false;
 
   // increase counter of created articles in manifest
