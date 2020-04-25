@@ -12,7 +12,7 @@
 #include <cerrno>
 #include <errno.h>
 #include <stdlib.h>
-
+#include <sstream>
 
 using std::ofstream;
 using std::ifstream;
@@ -61,6 +61,20 @@ FileDatabase::FileDatabase(){
 
 FileDatabase::~FileDatabase(){
 
+}
+
+// Extracts information from a line in the manifest file
+// ~ is the delimiter for the name of the newsgroup
+Newsgroup FileDatabase::extract(std::string s){
+  std::string name;
+  unsigned ID , art_Counter;
+  std::stringstream ss(s);
+
+  std::getline(ss, name,  '~');
+  ss >> ID;
+  ss >> art_Counter;
+
+  return Newsgroup{name, ID , art_Counter, std::unordered_map<unsigned, Article>()};
 }
 
 std::vector<Newsgroup> FileDatabase::listNewsgroups(){
@@ -148,6 +162,7 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
   ++NEWSGROUP_ID;
 
   out_manifest << name << "~ " << NEWSGROUP_ID <<  " 0" << "\n";
+
   out_manifest.close();
 
   if(!S_ISDIR(sb.st_mode)){
@@ -295,7 +310,21 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
     if(ID == ng_ID)
       break;
   }
+
+
+  /*
+  std::string s;
+  while(std::getline(manifest,s)){
+    Newsgroup ng = extract(s);
+    if(ng.id == ng_ID){
+
+    }
+  }
   */
+
+
+
+
   manifest.close();
 
   char dirLocation[512] = "./FileDatabase/";  //ROOT

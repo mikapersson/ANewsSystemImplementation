@@ -21,13 +21,9 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = newsclient inmemserver diskserver
+PROGS = newsclient test1 inmemserver diskserver
 
-all: libclientserver.a $(PROGS)
-
-libclientserver.a: server.o connection.o MessageHandler.o
-		ar rv libclientserver.a server.o connection.o MessageHandler.o
-		ranlib libclientserver.a
+all: $(PROGS)
 
 inmemserver: inmemserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 newsclient: connection.o MessageHandler.o newsclient.o
@@ -35,6 +31,10 @@ diskserver: diskserver.o MessageHandler.o connection.o FileDatabase.o server.o
 
 install: inmemserver newsclient diskserver
 	cp -fv inmemserver newsclient diskserver ../bin
+
+
+test1: test1.o FileDatabase.o
+
 
 clear:
 	rm -rfv FileDatabase
@@ -51,7 +51,7 @@ clean:
 
 distclean: clean
 	-rm -f $(SRC:.cc=.d)
-	rm -f libclientserver.a
+
 
 
 
