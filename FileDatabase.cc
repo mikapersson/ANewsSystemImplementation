@@ -113,7 +113,7 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
 }
 
 
-bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any blank spaces
+bool FileDatabase::createNewsgroup(string name){ 
 
 
   ifstream in_manifest(manifestPath);
@@ -126,7 +126,7 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
   while(std::getline(in_manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
     
-    if(tempNG.name == name){
+    if(tempNG.name == name){  // already exists a newsgroup with the name 'name'
       in_manifest.close();
       return false;
     }
@@ -206,6 +206,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
     Newsgroup tempNG = extract(tempRow);
 
     if(tempNG.newsGroup_ID == ng_ID){
+      tmpName = tempNG.name;
       tempID = ng_ID;
       break;
     }else{
