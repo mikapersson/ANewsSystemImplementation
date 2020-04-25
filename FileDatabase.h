@@ -49,6 +49,9 @@ public:
   // Removes the newsgroupfolder and all its contents
   int removeNewsgroup(char path[]);
 
+  // Extracts newsgroup information from a line in the manifest file
+  Newsgroup extract(std::string s);
+
 private:
   std::string tmpNgName; // is set by ngExists function
   char root[16] = "./FileDatabase";
