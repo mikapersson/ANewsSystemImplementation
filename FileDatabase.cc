@@ -397,7 +397,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
   }
 
   std::string tempRow, ngName;
-  unsigned ng, artID;
+  unsigned ng, artID = 0;
   while(std::getline(in_manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
     if(tempNG.newsGroup_ID == ng_ID){  // found the correct newsgroup
@@ -466,8 +466,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   file.seekg(0,file.beg);
 
   string tempRow, str;
-  unsigned artCnt1;
-  unsigned artCnt2 = 0;
+  unsigned artCnt = 0;
   int position = 0;
   while(std::getline(file, tempRow)){ // Find correct postion of Article count of correct Newsgroup
     Newsgroup tempNG = extract(tempRow);
@@ -475,7 +474,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
       str = tempNG.name;
       position = file.tellg();
       position++;  // For space in file
-      artCnt2 = tempNG.article_IDs;
+      artCnt = tempNG.article_IDs;
       break;
     }
   }
@@ -500,10 +499,10 @@ void FileDatabase::increaseArtCounter(unsigned ID){
 
   file.read(contents, filelength); // reads the rest of the file
 
-  artCnt2++; // increases Article count by one before writing it back into file
-  str = std::to_string(artCnt2);
+  artCnt++; // increases Article count by one before writing it back into file
+  str = std::to_string(artCnt);
   unsigned i = 0;
-  if(artCnt2 % 10 == 0)
+  if(artCnt % 10 == 0)
     i++;
 
   char* newContents = new char[filelength - position + i];
@@ -535,7 +534,7 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
     exit(1);
   }
 
-  unsigned tempID;
+  unsigned tempID = 0;
   string tempRow, tempName;
   while(std::getline(manifest, tempRow)){ // Find correct postion of Article count of correct Newsgroup
     Newsgroup tempNG = extract(tempRow);
