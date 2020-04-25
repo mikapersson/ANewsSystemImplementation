@@ -73,6 +73,12 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
     exit(1);
   }
 
+  string tempRow;
+  while(std::getline(manifest, tempRow)){
+    Newsgroup tempNG = extract(tempRow);
+
+  }
+
   /*
   std::string ngName;
   unsigned id, artCounter;
@@ -100,6 +106,12 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
   if(!in_manifest){
     std::cout << "Unable to open manifest file in CreateNewsgroup." << std::endl;
     exit(1);
+  }
+
+  string tempRow;
+  while(std::getline(in_manifest, tempRow)){
+    Newsgroup tempNG = extract(tempRow);
+    
   }
 
   /*
@@ -165,6 +177,12 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   char* contents1 = new char[filelength];
   char* contents2 = new char[filelength];
   manifest.seekg(0,manifest.beg);
+
+  string tempRow;
+  while(std::getline(manifest, tempRow)){
+    Newsgroup tempNG = extract(tempRow);
+    
+  }
 
   /*
   unsigned tmpID, tmpArtCounter;
@@ -264,6 +282,12 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
     exit(1);
   }
 
+  string tempRow;
+  while(std::getline(manifest, tempRow)){
+    Newsgroup tempNG = extract(tempRow);
+    
+  }
+
   /*
   std::string name;
   unsigned ID,artID;
@@ -340,7 +364,6 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
     Newsgroup newsGroup = extract(tempNG);
 
 
-
   }
 
   /*
@@ -399,6 +422,12 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   int filelength = file.tellg();
   char* contents = new char[filelength];
   file.seekg(0,file.beg);
+
+  string tempRow;
+  while(std::getline(file, tempRow)){
+    Newsgroup tempNG = extract(tempRow);
+    
+  }
 
   std::string str;
   int tmp2, position = 0;
@@ -464,7 +493,7 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
     if(tmpID == ng_ID)
       break;
   }*/
-  
+
   manifest.close();
   if(tmpID != ng_ID){
     // Error newsgroup does not exist
