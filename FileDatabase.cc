@@ -72,6 +72,8 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
     std::cerr << "Error opening manifest file!" << std::endl;
     exit(1);
   }
+
+  /*
   std::string ngName;
   unsigned id, artCounter;
 
@@ -79,7 +81,7 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
   // Använd getline med delimiter. och loop-condition peek != eof
   while(manifest >> ngName >> id >> artCounter)
     ngs.push_back(Newsgroup{ngName, id , artCounter , std::unordered_map<unsigned,Article>()});
-
+  */
 
   for(auto& ng : ngs){
     tmpA = listArticles(ng.newsGroup_ID);
@@ -100,14 +102,15 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
     exit(1);
   }
 
+  /*
   std::string tmpName, tmpId, artCount;
-
   while(in_manifest >> tmpName >> tmpId >> artCount){
     if(tmpName == name){ // Already exists
       in_manifest.close();
       return false;
     }
   }
+  */
   in_manifest.close();
 
 
@@ -132,7 +135,7 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
   // [Newsgroup name] [newsgroup ID] [article counter]
   ++NEWSGROUP_ID;
 
-  out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
+  out_manifest << name << "~ " << NEWSGROUP_ID <<  " 0" << "\n";
   out_manifest.close();
 
   if(!S_ISDIR(sb.st_mode)){
@@ -163,7 +166,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   char* contents2 = new char[filelength];
   manifest.seekg(0,manifest.beg);
 
-
+  /*
   unsigned tmpID, tmpArtCounter;
   string tmpName,name;
 
@@ -179,6 +182,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   if(tmpID != ng_ID){ // Newsgroup not found
     return false;
   }
+  */
 
   name = tmpName;
   long pos2 = manifest.tellg();
@@ -259,12 +263,15 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
     std::cout << "An error occurred when opening manifest file \n";
     exit(1);
   }
+
+  /*
   std::string name;
   unsigned ID,artID;
   while(manifest >> name >> ID >> artID){ // Detta inte testat för flera newsgroups
     if(ID == ng_ID)
       break;
   }
+  */
   manifest.close();
 
   char dirLocation[512] = "./FileDatabase/";  //ROOT
@@ -327,6 +334,16 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
     std::cout << "An error occurred while opening manifest file in createArticle." <<std::endl;
     exit(1);
   }
+
+  std::string tempNG;
+  while(std::getline(in_manifest, tempNG)){
+    Newsgroup newsGroup = extract(tempNG);
+
+
+
+  }
+
+  /*
   std::string ngName;
   unsigned ng,artID;
   while(in_manifest >> ngName >> ng >> artID){
@@ -335,6 +352,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
       break;
     }
   }
+  */
 
   in_manifest.close();
   if(ng != ng_ID) // not found
@@ -386,6 +404,8 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   int tmp2, position = 0;
   unsigned tmp1;
   // Find correct postion of Article count of correct Newsgroup
+
+  /*
   while(file >> str >> tmp1){
 
     if(tmp1 == ID){
@@ -395,7 +415,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
       break;
     }
     file >> tmp2;
-  }
+  }*/
 
   file.read(contents, filelength); // reads the rest of the file
 
@@ -434,6 +454,8 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
     exit(1);
   }
 
+
+  /*
   unsigned tmpID, tmpArtCounter;
   std::string tmpName;
 
@@ -441,7 +463,8 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
 
     if(tmpID == ng_ID)
       break;
-  }
+  }*/
+  
   manifest.close();
   if(tmpID != ng_ID){
     // Error newsgroup does not exist
