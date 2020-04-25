@@ -465,18 +465,28 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   char* contents = new char[filelength];
   file.seekg(0,file.beg);
 
-  string tempRow;
-  while(std::getline(file, tempRow)){
+  string tempRow, str;
+  unsigned artCnt1;
+  unsigned artCnt2 = 0;
+  int position = 0;
+  while(std::getline(file, tempRow)){ // Find correct postion of Article count of correct Newsgroup
     Newsgroup tempNG = extract(tempRow);
-    
+    if(tempNG.newsGroup_ID == ID){
+      str = tempNG.name;
+      position = file.tellg();
+      position++;  // For space in file
+      artCnt2 = tempNG.article_IDs;
+      break;
+    }
   }
 
+  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   std::string str;
   int tmp2, position = 0;
   unsigned tmp1;
   // Find correct postion of Article count of correct Newsgroup
 
-  /*
+  
   while(file >> str >> tmp1){
 
     if(tmp1 == ID){
@@ -485,15 +495,15 @@ void FileDatabase::increaseArtCounter(unsigned ID){
       file >> tmp2;
       break;
     }
-    file >> tmp2;
+    file >> tmp2;  // VAD HÄNDER HÄR?
   }*/
 
   file.read(contents, filelength); // reads the rest of the file
 
-  tmp2++; // increases Article count by one before writing it back into file
-  str = std::to_string(tmp2);
+  artCnt2++; // increases Article count by one before writing it back into file
+  str = std::to_string(artCnt2);
   unsigned i = 0;
-  if(tmp2 % 10 == 0)
+  if(artCnt2 % 10 == 0)
     i++;
 
   char* newContents = new char[filelength - position + i];
@@ -525,8 +535,18 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
     exit(1);
   }
 
+  unsigned tempID;
+  string tempRow, tempName;
+  while(std::getline(manifest, tempRow)){ // Find correct postion of Article count of correct Newsgroup
+    Newsgroup tempNG = extract(tempRow);
+    if(tempNG.newsGroup_ID == ng_ID){
+      tempName = tempNG.name;
+      tempID = tempNG.newsGroup_ID;
+      break;
+    }
+  }
 
-  /*
+  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   unsigned tmpID, tmpArtCounter;
   std::string tmpName;
 
@@ -537,13 +557,13 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
   }*/
 
   manifest.close();
-  if(tmpID != ng_ID){
+  if(tempID != ng_ID){
     // Error newsgroup does not exist
     return false;
   }
 
   char path[512] = "./FileDatabase/";
-  strcat(path , tmpName.c_str());
+  strcat(path , tempName.c_str());
   path[strlen(path)] = '/';
   string tmpArtID = std::to_string(art_ID);
   strcat(path , tmpArtID.c_str());
@@ -610,17 +630,30 @@ bool FileDatabase::ngExists(unsigned ng_ID){
     exit(1);
   }
 
+  unsigned tempID;
+  string tempRow, tempName;
+  while(std::getline(manifest, tempRow)){ // Find correct postion of Article count of correct Newsgroup
+    Newsgroup tempNG = extract(tempRow);
+    if(tempNG.newsGroup_ID == ng_ID){
+      tempName = tempNG.name;
+      tempID = tempNG.newsGroup_ID;
+      break;
+    }
+  }
+
+  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   unsigned tmpID, tmpArtCounter;
   std::string tmpName;
 
   while(manifest >> tmpName >> tmpID >> tmpArtCounter){
     if(tmpID == ng_ID)
       break;
+  }*/
 
-}
+
   manifest.close();
-  tmpNgName = tmpName;
-  return (tmpID == ng_ID);
+  tmpNgName = tempName;
+  return (tempID == ng_ID);
 }
 
 
