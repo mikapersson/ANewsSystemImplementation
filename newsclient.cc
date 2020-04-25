@@ -19,8 +19,6 @@ using std::cout;
 
 string validCommands[] = {"read" , "list" , "delete", "create", "exit" , "help", "clear"};
 
-const unsigned INPUT_BUFFER = 10000;
-
 
 Connection* init(int argc, char *argv[]){
 
@@ -362,7 +360,7 @@ void deleteC(MessageHandler &mh, string parameters){
 int main(int argc, char *argv[]){
 
   Connection* conn = init(argc, argv);
-  char cinput[INPUT_BUFFER];
+
   MessageHandler mh(*conn);
 
   bool running = true;
@@ -372,15 +370,17 @@ int main(int argc, char *argv[]){
   printWelcomeMessage();
   while(running){
     cout << ">>>"; // prompt
-    std::cin.getline(cinput,INPUT_BUFFER);
+
+    std::getline(std::cin , input);
 
     if(std::cin.fail()){
-      cout <<"Input exceed the maximum size of " << INPUT_BUFFER << " chars." << std::endl;
+      cout << "Input failed!" << std::endl;
       std::cin.clear();
-      std::cin.ignore(INPUT_BUFFER*10,'\n');
+      // std::cin.ignore(100,'\n');
       continue;
     }
-    input = string(cinput);
+
+
     // The first word is considered the command.
     command = input.substr(0, input.find_first_of(' ',0));
     // Only send parameters of the command to respective function
