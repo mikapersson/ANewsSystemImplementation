@@ -132,7 +132,7 @@ bool FileDatabase::createNewsgroup(string name){  // 'name' must not contain any
   // [Newsgroup name] [newsgroup ID] [article counter]
   ++NEWSGROUP_ID;
 
-  out_manifest << name << "} " << NEWSGROUP_ID <<  " 0" << "\n";
+  out_manifest << name << " " << NEWSGROUP_ID <<  " 0" << "\n";
   out_manifest.close();
 
   if(!S_ISDIR(sb.st_mode)){
