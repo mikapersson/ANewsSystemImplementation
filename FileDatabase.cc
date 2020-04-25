@@ -170,7 +170,7 @@ bool FileDatabase::createNewsgroup(string name){
 
   out_manifest.close();
 
-  if(!S_ISDIR(sb.st_mode)){
+  if(!S_ISDIR(sb.st_mode)){  // create the directory for the corresponding newsgroup
     int status = mkdir(dirPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if(status == -1){
       std::cout << "An error occurred while creating newsgroup directory." <<std::endl;
