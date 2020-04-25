@@ -21,7 +21,7 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = newsclient test1 inmemserver diskserver
+PROGS = newsclient inmemserver diskserver
 
 all: $(PROGS)
 
@@ -33,7 +33,7 @@ install: inmemserver newsclient diskserver
 	cp -fv inmemserver newsclient diskserver ../bin
 
 
-test1: test1.o FileDatabase.o
+# test1: test1.o FileDatabase.o
 
 
 clear:
