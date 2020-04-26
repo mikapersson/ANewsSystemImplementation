@@ -15,7 +15,7 @@ make install
 ```
 
 ## Usage
-After the installation, navigate to the /bin/ directory where the executables now will lie with the command:
+After the installation, navigate to the (empty) /bin/ directory where the executables now will lie with the command:
 
 ```
 cd ../bin
@@ -39,6 +39,15 @@ The following command will run the client:
 ```
 where *hostname* specifies the IP-address where the server is hosted, for example 'localhost' if the client runs on the same computer as the server, and *port* is the same as above.
 
+## Example
+An example of how you can test the program on your computer:
 
+```
+make all
+make install
+cd ../bin
+./newsserver 3000
+./newsclient localhost 3000
+```
 
 
