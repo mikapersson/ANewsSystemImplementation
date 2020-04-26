@@ -130,7 +130,7 @@ bool FileDatabase::createNewsgroup(string name){
   while(std::getline(in_manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
 
-    if(tempNG.name == name){  // already exists a newsgroup with the name 'name'
+    if(tempNG.name == name){  // already exists a newsgroup with that name
       in_manifest.close();
       return false;
     }
@@ -478,19 +478,22 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   string tempRow, str;
   int artCnt = 0;
   int position = 0;
+  int tmp = 0;
   while(std::getline(file, tempRow)){ // Find correct postion of Article count of correct Newsgroup
     Newsgroup tempNG = extract(tempRow);
     if(tempNG.newsGroup_ID == ID){
       str = tempNG.name;
-
+      file.unget();
       // Finds position in stream of artCount
       while(file.peek() != ' '){
-        file.unget(); // Backs upp until right before artCount
+        file.unget();
+        //file // Backs upp until right before artCount
       }
 
       position = file.tellg();
       position++;  // For space in file
       artCnt = tempNG.article_IDs;
+      file >> tmp; // Reads old artCount
       break;
     }
     artCnt = tempNG.article_IDs;
@@ -511,7 +514,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
       file >> tmp2;
       break;
     }
-    file >> tmp2;  
+    file >> tmp2;
   }*/
 
   file.read(contents, filelength); // reads the rest of the file
