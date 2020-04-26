@@ -407,7 +407,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
   }
 
   std::string tempRow, ngName;
-  unsigned ng, artID = 0;
+  unsigned ng=99999999, artID = 0;
   while(std::getline(in_manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
     if(tempNG.newsGroup_ID == ng_ID){  // found the correct newsgroup
@@ -419,17 +419,6 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
 
   }
 
-
-  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
-  std::string ngName;
-  unsigned ng,artID;
-  while(in_manifest >> ngName >> ng >> artID){
-
-    if(ng == ng_ID){ // found correct newsgroup
-      break;
-    }
-  }
-  */
 
   in_manifest.close();
   if(ng != ng_ID) // newsgroup not found
@@ -501,23 +490,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
     artCnt = tempNG.article_IDs;
   }
 
-  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
-  std::string str;
-  int tmp2, position = 0;
-  unsigned tmp1;
-  // Find correct postion of Article count of correct Newsgroup
 
-
-  while(file >> str >> tmp1){
-
-    if(tmp1 == ID){
-      position = file.tellg();
-      position++; // For space in file
-      file >> tmp2;
-      break;
-    }
-    file >> tmp2;
-  }*/
 
   file.read(contents, filelength); // reads the rest of the file
 
@@ -566,16 +539,6 @@ bool FileDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
       break;
     }
   }
-
-  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
-  unsigned tmpID, tmpArtCounter;
-  std::string tmpName;
-
-  while(manifest >> tmpName >> tmpID >> tmpArtCounter){
-
-    if(tmpID == ng_ID)
-      break;
-  }*/
 
   manifest.close();
   if(tempID != ng_ID){
@@ -638,7 +601,6 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
     std::cerr << "Error during number conversion in getArticle:\t" << e.what() << std::endl;
   }
 
-
   int current_position = article.tellg();
 
   article.seekg(0,article.end);
@@ -646,11 +608,9 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
   char* textArr = new char[textLength + 1];
   article.seekg(current_position);
 
-
   article.read(textArr , textLength );
   textArr[textLength] = '\0';
   string text(textArr);
-
   delete[] textArr;
 
   return Article{title,author, ID, text};
@@ -666,7 +626,7 @@ bool FileDatabase::ngExists(unsigned ng_ID){
     exit(1);
   }
 
-  unsigned tempID = 0;
+  unsigned tempID = 999999999;
   string tempRow, tempName;
   while(std::getline(manifest, tempRow)){ // Find correct postion of Article count of correct Newsgroup
     Newsgroup tempNG = extract(tempRow);
@@ -676,15 +636,6 @@ bool FileDatabase::ngExists(unsigned ng_ID){
       break;
     }
   }
-
-  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
-  unsigned tmpID, tmpArtCounter;
-  std::string tmpName;
-
-  while(manifest >> tmpName >> tmpID >> tmpArtCounter){
-    if(tmpID == ng_ID)
-      break;
-  }*/
 
 
   manifest.close();
