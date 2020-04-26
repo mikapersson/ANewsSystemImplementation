@@ -625,23 +625,34 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
   }
 
 
-  string title , author;
-  unsigned ID;
+  string title , author, strID;
+  unsigned ID = 0;
 
   std::getline(article , title);
   std::getline(article , author);
-  article >> ID;
+  std::getline(article , strID);
+
+  try{
+    ID = std::stoi(strID);
+  }catch(std::exception& e){
+    std::cerr << "Error during number conversion in getArticle:\t" << e.what() << std::endl;
+  }
+
 
   int current_position = article.tellg();
 
   article.seekg(0,article.end);
   int textLength = static_cast<int>(article.tellg()) - current_position;
-  char* textArr = new char[textLength];
+  char* textArr = new char[textLength + 1];
   article.seekg(current_position);
 
-  article.read(textArr , textLength);
+
+  article.read(textArr , textLength );
+  textArr[textLength] = '\0';
   string text(textArr);
-  std::cout << textArr << std::endl;
+
+  delete[] textArr;
+
   return Article{title,author, ID, text};
 }
 
