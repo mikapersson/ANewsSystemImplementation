@@ -95,17 +95,7 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
 
     ngs.push_back(tempNG);
   }
-
-  /*  MAY BE REMOVED WHEN THE PROGRAM IS WORKING
-  std::string ngName;
-  unsigned id, artCounter;
-
-  // För att läsa namn som innehåller space, sätt namn framför |,
-  // Använd getline med delimiter. och loop-condition peek != eof
-  while(manifest >> ngName >> id >> artCounter)
-    ngs.push_back(Newsgroup{ngName, id , artCounter , std::unordered_map<unsigned,Article>()});
-  */
-
+  
   for(auto& ng : ngs){
     tmpA = listArticles(ng.newsGroup_ID);
     std::for_each(tmpA.begin(),tmpA.end(),[&](const Article &a){
@@ -118,7 +108,6 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
 
 
 bool FileDatabase::createNewsgroup(string name){
-
 
   ifstream in_manifest(manifestPath);
   if(!in_manifest){
@@ -137,19 +126,7 @@ bool FileDatabase::createNewsgroup(string name){
 
   }
 
-  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
-  std::string tmpName, tmpId, artCount;
-  while(in_manifest >> tmpName >> tmpId >> artCount){
-    if(tmpName == name){ // Already exists
-      in_manifest.close();
-      return false;
-    }
-  }
-  */
   in_manifest.close();
-
-
-
 
   ofstream out_manifest(manifestPath, std::ofstream::app);
 
@@ -221,24 +198,6 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   if(tempID != ng_ID){ // Newsgroup not found
     return false;
   }
-
-  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
-  unsigned tmpID, tmpArtCounter;
-  string tmpName,name;
-
-  // check manifest for newsgroup id
-  long pos1 = 0;
-  while(manifest >> tmpName >> tmpID >> tmpArtCounter){
-    if(tmpID == ng_ID){
-      break;
-    }else{
-      pos1 = manifest.tellg();
-    }
-  }
-  if(tmpID != ng_ID){ // Newsgroup not found
-    return false;
-  }
-  */
 
   name = tmpName;
   long pos2 = manifest.tellg();
@@ -325,15 +284,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
       name = tempNG.name;
       break;
     }
-}
-  /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
-  std::string name;
-  unsigned ID,artID;
-  while(manifest >> name >> ID >> artID){ // Detta inte testat för flera newsgroups
-    if(ID == ng_ID)
-      break;
-  }*/
-
+  }
 
   manifest.close();
 
