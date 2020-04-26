@@ -17,6 +17,8 @@
 using std::ofstream;
 using std::ifstream;
 using std::fstream;
+using std::cout;
+using std::endl;
 using std::string;
 
 
@@ -238,8 +240,8 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
 
   name = tmpName;
   long pos2 = manifest.tellg();
-  manifest.seekg(pos2  + 1);
-  manifest.read(contents2, filelength -pos2);
+  manifest.seekg(pos2);
+  manifest.read(contents2, filelength - pos2);
   manifest.clear();
   manifest.seekg(0);
   manifest.read(contents1, pos1);
@@ -247,9 +249,7 @@ bool FileDatabase::deleteNewsgroup(unsigned ng_ID){
   manifest.open(manifestPath, std::fstream::out | std::fstream::trunc);
 
   manifest.write(contents1 , pos1); // Content before
-
-  manifest.put('\n');
-  manifest.write(contents2, filelength - pos2 - 1); // content after
+  manifest.write(contents2, filelength - pos2); // content after
 
   manifest.close();
 
