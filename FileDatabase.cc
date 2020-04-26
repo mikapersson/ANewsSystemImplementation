@@ -402,6 +402,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
   while(std::getline(in_manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
     if(tempNG.newsGroup_ID == ng_ID){  // found the correct newsgroup
+      ngName = tempNG.name;
       ng = ng_ID;
       artID = tempNG.article_IDs;
       break;
