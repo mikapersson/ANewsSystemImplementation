@@ -410,6 +410,7 @@ bool FileDatabase::createArticle(unsigned ng_ID , string title, string author, s
 
   }
 
+
   /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   std::string ngName;
   unsigned ng,artID;
