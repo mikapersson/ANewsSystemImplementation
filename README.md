@@ -15,7 +15,7 @@ make install
 ```
 
 ## Usage
-After the installation, navigate to the /bin/ directory where the executables now will lie with:
+After the installation, navigate to the /bin/ directory where the executables now will lie with the command:
 
 ```
 cd ../bin
@@ -30,8 +30,14 @@ Run the disk version of the server with:
 ```
 ./diskserver [port]
 ```
+where *port* is the specified port through which the clients and server will communicate (for example '3000').
 
-
+### Run the Client
+The following command will run the client:
+```
+./newsclient [hostname] [port]
+```
+where *hostname* specifies the IP-address where the server is hosted, for example 'localhost' if the client runs on the same computer as the server, and *port* is the same as above.
 
 
 
