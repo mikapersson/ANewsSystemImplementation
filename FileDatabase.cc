@@ -465,11 +465,12 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   // Find file length and reset file position
   file.seekg(0,file.end);
   int filelength = file.tellg();
+  cout << "filelength = '" << filelength << "'" << endl;
   char* contents = new char[filelength];
   file.seekg(0,file.beg);
 
   string tempRow, str;
-  unsigned artCnt = 0;
+  int artCnt = 0;
   int position = 0;
   while(std::getline(file, tempRow)){ // Find correct postion of Article count of correct Newsgroup
     Newsgroup tempNG = extract(tempRow);
@@ -480,6 +481,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
       artCnt = tempNG.article_IDs;
       break;
     }
+    artCnt = tempNG.article_IDs;
   }
 
   /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
@@ -497,14 +499,14 @@ void FileDatabase::increaseArtCounter(unsigned ID){
       file >> tmp2;
       break;
     }
-    file >> tmp2;  // VAD HÄNDER HÄR?
+    file >> tmp2;  
   }*/
 
   file.read(contents, filelength); // reads the rest of the file
 
   artCnt++; // increases Article count by one before writing it back into file
   str = std::to_string(artCnt);
-  unsigned i = 0;
+  int i = 0;
   if(artCnt % 10 == 0)
     i++;
 
@@ -519,6 +521,8 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   }
 
   file.seekg(position); // find correct position for Article count
+  cout << "filelength - position + i = " << filelength - position + i << endl;
+  cout << "newContent = '" << newContents << "'" << endl;
 
   file.write(newContents, filelength - position + i); // overwrite rest of file with new content
 
