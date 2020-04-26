@@ -15,7 +15,7 @@ make install
 ```
 
 ## Usage
-After the installation, navigate to the (empty) /bin/ directory where the executables now will lie with the command:
+After the installation, navigate to the /bin/ directory where the executables now will lie with the command:
 
 ```
 cd ../bin
