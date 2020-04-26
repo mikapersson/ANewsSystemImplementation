@@ -1,7 +1,6 @@
-CPP 2020 Project, Communication Classes
----------------------------------------
+# A Simple News System Implementation
 
-- This directory contains the communication classes Connection and Server,
-  and the auxiliary classes ConnectionClosedException and Protocol. These
-  classes are defined in the project description, sections 5.2 and 6.
-- Something more.
+## :thought_balloon: Background
+A news system has been developed consisting of a news server and a news client. The server can handle two types databases, one stored in the primary memory (in-memory) and another stored on disk. A database contains newsgroups, where each newsgroup contains articles, and the client accepts commands from the user and communicates with the server. Multiple clients can be connected to the server at any time.
+
+
