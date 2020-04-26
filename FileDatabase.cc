@@ -391,7 +391,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   }
   closedir(dir);
 
-  std::sort(arts.begin(),arts.end(), [&](Article &a1, Article &a2){return a1.title < a2.title;});  // sort articles
+  std::sort(arts.begin(),arts.end(), [&](Article &a1, Article &a2){return a1.article_ID < a2.article_ID;});  // sort articles
 
   return arts;
 }
