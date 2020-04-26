@@ -623,10 +623,7 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
     std::cout << "Unable to open manifest file in getArticle." << std::endl;
     exit(1);
   }
-  article.seekg(0,article.end);
-  int filelength = article.tellg();
-  char* textArr = new char[filelength];
-  article.seekg(0);
+
 
   string title , author;
   unsigned ID;
@@ -635,9 +632,16 @@ Article FileDatabase::getArticle(unsigned ng_ID , unsigned art_ID){
   std::getline(article , author);
   article >> ID;
 
-  article.read(textArr , filelength);
-  string text(textArr);
+  int current_position = article.tellg();
 
+  article.seekg(0,article.end);
+  int textLength = static_cast<int>(article.tellg()) - current_position;
+  char* textArr = new char[textLength];
+  article.seekg(current_position);
+
+  article.read(textArr , textLength);
+  string text(textArr);
+  std::cout << textArr << std::endl;
   return Article{title,author, ID, text};
 }
 
