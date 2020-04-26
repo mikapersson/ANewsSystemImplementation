@@ -9,7 +9,7 @@ A news system has been developed consisting of a news server and a news client. 
 ## Install and Run 
 Navigate to the 
 
-'''
+```
 fdfef
-'''
+```
 
