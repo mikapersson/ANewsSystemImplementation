@@ -92,6 +92,7 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
   string tempRow;
   while(std::getline(manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
+
     ngs.push_back(tempNG);
   }
 
@@ -111,11 +112,12 @@ std::vector<Newsgroup> FileDatabase::listNewsgroups(){
       ng.articles[a.article_ID] = a;
     });
   }
+
   return ngs;
 }
 
 
-bool FileDatabase::createNewsgroup(string name){ 
+bool FileDatabase::createNewsgroup(string name){
 
 
   ifstream in_manifest(manifestPath);
@@ -127,7 +129,7 @@ bool FileDatabase::createNewsgroup(string name){
   string tempRow;
   while(std::getline(in_manifest, tempRow)){
     Newsgroup tempNG = extract(tempRow);
-    
+
     if(tempNG.name == name){  // already exists a newsgroup with the name 'name'
       in_manifest.close();
       return false;
@@ -323,8 +325,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
       name = tempNG.name;
       break;
     }
-  }
-
+}
   /* MAY BE REMOVED WHEN THE PROGRAM IS WORKING
   std::string name;
   unsigned ID,artID;
@@ -336,10 +337,14 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
 
   manifest.close();
 
-  char dirLocation[512] = "./FileDatabase/";  //ROOT
+  char dirLocation[512];
+  strcpy(dirLocation , root);
+  dirLocation[strlen(dirLocation) + 1] = '\0';
+  dirLocation[strlen(dirLocation) ] = '/';
   char filepath[512];
+
   strcat(dirLocation, name.c_str());
-  dirLocation[strlen(dirLocation) ] = '\0';
+  dirLocation[strlen(dirLocation)  + 1] = '\0';
   dirLocation[strlen(dirLocation) ] = '/';
 
   if((dir = opendir(dirLocation)) == nullptr){
@@ -348,6 +353,7 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
   }
   std::string title, author, text, tmp;
   unsigned art_ID;
+
 
   while((ent = readdir(dir)) != nullptr){
     strcpy(filepath,dirLocation); // ./Database/[NewsgroupName]
@@ -474,6 +480,12 @@ void FileDatabase::increaseArtCounter(unsigned ID){
     Newsgroup tempNG = extract(tempRow);
     if(tempNG.newsGroup_ID == ID){
       str = tempNG.name;
+
+      // Finds position in stream of artCount
+      while(file.peek() != ' '){
+        file.unget(); // Backs upp until right before artCount
+      }
+
       position = file.tellg();
       position++;  // For space in file
       artCnt = tempNG.article_IDs;
@@ -487,7 +499,7 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   unsigned tmp1;
   // Find correct postion of Article count of correct Newsgroup
 
-  
+
   while(file >> str >> tmp1){
 
     if(tmp1 == ID){
@@ -631,7 +643,7 @@ bool FileDatabase::ngExists(unsigned ng_ID){
     exit(1);
   }
 
-  unsigned tempID;
+  unsigned tempID = 0;
   string tempRow, tempName;
   while(std::getline(manifest, tempRow)){ // Find correct postion of Article count of correct Newsgroup
     Newsgroup tempNG = extract(tempRow);
