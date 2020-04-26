@@ -390,6 +390,9 @@ std::vector<Article> FileDatabase::listArticles(unsigned ng_ID){
     article.close();
   }
   closedir(dir);
+
+  std::sort(arts.begin(),arts.end(), [&](Article &a1, Article &a2){return a1.article_ID < a2.article_ID;});  // sort articles
+
   return arts;
 }
 
@@ -471,7 +474,6 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   // Find file length and reset file position
   file.seekg(0,file.end);
   int filelength = file.tellg();
-  cout << "filelength = '" << filelength << "'" << endl;
   char* contents = new char[filelength];
   file.seekg(0,file.beg);
 
@@ -536,8 +538,6 @@ void FileDatabase::increaseArtCounter(unsigned ID){
   }
 
   file.seekg(position); // find correct position for Article count
-  cout << "filelength - position + i = " << filelength - position + i << endl;
-  cout << "newContent = '" << newContents << "'" << endl;
 
   file.write(newContents, filelength - position + i); // overwrite rest of file with new content
 
