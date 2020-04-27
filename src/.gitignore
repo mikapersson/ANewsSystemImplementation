@@ -1,5 +1,7 @@
-commong
+common
+.vscode
 META-INF
+client_server_uml.wsd
 test
 testServer1
 testServer2
