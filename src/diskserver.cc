@@ -171,7 +171,7 @@ void createArt(Database& db, MessageHandler& mh){
     auto title = mh.rec_string_parameter();
     auto author = mh.rec_string_parameter();
     auto text = mh.rec_string_parameter();
-
+    
     if(db.createArticle(grID, title, author, text)){  //if newsgroup exists
         mh.send_anscode(Protocol::ANS_ACK);
     } else {
