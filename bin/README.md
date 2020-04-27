@@ -1,1 +1,1 @@
-The executables are collected in thid directory after installation.
+The executables are collected in this directory after installation.
