@@ -40,7 +40,7 @@ The following command will run the client:
 where *hostname* specifies the IP-address where the server is hosted, for example 'localhost' if the client runs on the same computer as the server, and *port* is described above.
 
 ## Example
-An example of how you can test the program on your computer:
+An example of how you can test the program on your computer (starting from /src/):
 
 ```
 make all
