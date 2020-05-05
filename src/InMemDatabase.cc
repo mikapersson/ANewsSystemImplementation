@@ -45,7 +45,7 @@ bool InMemDatabase::deleteNewsgroup(unsigned ng_ID){
 vector<Article> InMemDatabase::listArticles(unsigned ng_ID){
   Newsgroup ng = newsgroups[ng_ID];
   vector<Article> articles;
-  //std::for_each(ng.articles.begin(),ng.articles.end(),[]( std::pair<unsigned,Article> &p){articles.push_back(p.second);});
+
 
   for(auto& a : ng.articles){
     articles.push_back(a.second);
@@ -61,8 +61,8 @@ bool InMemDatabase::createArticle(unsigned ng_ID , string title, string author, 
     Newsgroup* ng;
     try{
         ng = &newsgroups.at(ng_ID);
-    }catch(std::out_of_range e){
-        std::cout << "no ng id\n";
+    }catch(std::out_of_range& e){
+        //std::cout << "no ng id\n";
         return false;
     }
     ng->article_IDs++;
@@ -71,7 +71,8 @@ bool InMemDatabase::createArticle(unsigned ng_ID , string title, string author, 
     return true;
 
 }
-// Utgår från att den går igenom
+
+
 bool InMemDatabase::deleteArticle(unsigned ng_ID , unsigned art_ID){
 
   Newsgroup* ng = &newsgroups.at(ng_ID);
@@ -88,7 +89,7 @@ bool InMemDatabase::ngExists(unsigned ng_ID){
 
   try{
     newsgroups.at(ng_ID);
-  }catch(std::out_of_range e){
+  }catch(std::out_of_range& e){
     return false;
   }
   return true;
@@ -96,6 +97,7 @@ bool InMemDatabase::ngExists(unsigned ng_ID){
 
 
 bool InMemDatabase::artExists(unsigned ng_ID, unsigned art_ID) {
+
   try{
     newsgroups.at(ng_ID).articles.at(art_ID);
 
