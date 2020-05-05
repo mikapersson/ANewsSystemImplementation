@@ -16,24 +16,30 @@ CXXFLAGS += -std=c++11
 CXXFLAGS += -g
 CXXFLAGS += $(DEPFLAGS)
 LDFLAGS =   -g
-#CPPFLAGS += -stdlib=libc++
-#CXXFLAGS += -stdlib=libc++
-#LDFLAGS +=  -stdlib=libc++
+
 
 # Targets
 PROGS = newsclient inmemserver diskserver
 
 all: $(PROGS)
 
-inmemserver: inmemserver.o connection.o InMemDatabase.o MessageHandler.o server.o
 newsclient: connection.o MessageHandler.o newsclient.o
-diskserver: diskserver.o MessageHandler.o connection.o FileDatabase.o server.o
+
+
+inmemserver:  connection.o InMemDatabase.o MessageHandler.o server.o FileDatabase.o
+	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -DMEMORYDB -c newsserver.cc
+	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o inmemserver newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o FileDatabase.o
+
+diskserver: connection.o InMemDatabase.o MessageHandler.o server.o FileDatabase.o
+	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -DFILEDB -c newsserver.cc
+	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o diskserver newsserver.o connection.o InMemDatabase.o MessageHandler.o server.o FileDatabase.o
+
+
 
 install: inmemserver newsclient diskserver
 	cp -fv inmemserver newsclient diskserver ../bin
 
 
-# test1: test1.o FileDatabase.o
 
 
 clear:
