@@ -293,26 +293,33 @@ void createArt(MessageHandler &mh, int ng_ID){
   string title;
   string author;
   string text;
+  string temp_line;
 
   mh.send_anscode(Protocol::COM_CREATE_ART);
   mh.send_int_parameter(ng_ID);
   cout << "You are now creating an article, please provide the following:" << endl;
+  
   cout << "Title: ";
   std::getline(std::cin, title);
   mh.send_string_parameter(title);
+
   cout << "Author: ";
   std::getline(std::cin, author);
   mh.send_string_parameter(author);
-  cout << "Article Text: ";
-  while(std::getline(std::cin, text)){
-    auto end = text.back();
+
+  cout << "Article Text (finish with '~'): ";
+  while(std::getline(std::cin, temp_line)){
+    auto end = temp_line.back();
     if(end == '~'){
-      mh.send_string_parameter(text);
+      temp_line = temp_line.substr(0, temp_line.size()-1);
+      text.append(temp_line);
       break;
     } else {
-      mh.send_string_parameter(text);
+      text.append(temp_line + '\n');
     }
   }
+
+  mh.send_string_parameter(text);
   mh.send_anscode(Protocol::COM_END);
 
   mh.rec_cmd(); // ANS_CREATE_ART
