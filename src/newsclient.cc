@@ -27,7 +27,7 @@ Connection* init(int argc, char *argv[]){
     cout << "Usage: ./newsclient server port " << std::endl;
     exit(1);
   }
-  // Is the servername on the correct form? Check?
+
 
   int port = -1;
   try{
@@ -298,7 +298,7 @@ void createArt(MessageHandler &mh, int ng_ID){
   mh.send_anscode(Protocol::COM_CREATE_ART);
   mh.send_int_parameter(ng_ID);
   cout << "You are now creating an article, please provide the following:" << endl;
-  
+
   cout << "Title: ";
   std::getline(std::cin, title);
   mh.send_string_parameter(title);
