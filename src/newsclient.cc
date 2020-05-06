@@ -16,6 +16,7 @@
 
 using std::string;
 using std::cout;
+using std::endl;
 
 string validCommands[] = {"read" , "list" , "delete", "create", "exit" , "help", "clear"};
 
@@ -209,7 +210,8 @@ void printHelpMessage(){
             << "list ng_ID\t\t\t\t- list articles in a specific newsgroup.\n"
             << "read ng_ID art_ID\t\t\t- read an article.\n"
             << "create \"title\"\t\t\t\t- create a newsgroup.\n"
-            << "create ng_ID \"title\" \"author\" \"text\"\t- create an article.\n"
+            << "create ng_ID\t\t\t\t- create an article in the newsgroup ng_ID.\n"
+            //<< "create ng_ID \"title\" \"author\" \"text\"\t- create an article.\n"
             << "delete ng_ID\t\t\t\t- delete a newsgroup.\n"
             << "delete ng_ID art_ID\t\t\t- delete an article.\n"
             << "clear\t\t\t\t\t- clear screen.\n"
@@ -246,6 +248,7 @@ void createNg(MessageHandler& mh, string parameters){
   mh.rec_cmd(); // ANS_END
 }
 // from main -> create -> createArt
+/* REMOVE WHEN PROGRAM IS WORKING
 void createArt(MessageHandler &mh, string parameters, int ng_ID){
   unsigned q = 0;
   for(char& c: parameters)
@@ -284,6 +287,31 @@ void createArt(MessageHandler &mh, string parameters, int ng_ID){
 
   mh.rec_cmd(); // ANS_END
 
+}*/
+
+void createArt(MessageHandler &mh, int ng_ID){
+  string title;
+  string author;
+  string text;
+
+  mh.send_anscode(Protocol::COM_CREATE_ART);
+  mh.send_int_parameter(ng_ID);
+  for(auto& s: art)
+    mh.send_string_parameter(s);
+  mh.send_anscode(Protocol::COM_END);
+
+  mh.rec_cmd(); // ANS_CREATE_ART
+  Protocol p = mh.rec_cmd();
+
+  if(p == Protocol::ANS_NAK){
+    mh.rec_cmd(); // ERR_NG_DOES_NOT_EXIST
+    cout << "No newsgroup with ID:\t" << ng_ID << "."<< std::endl;
+  }else{
+    cout << "Article created." <<std::endl;
+  }
+
+  mh.rec_cmd(); // ANS_END
+
 }
 
 void create(MessageHandler &mh, string parameters){
@@ -292,7 +320,8 @@ void create(MessageHandler &mh, string parameters){
   try{
     int ng_ID = stoi(parameters); // if able to find a number, create art otherwise create ng
     parameters = parameters.substr(parameters.find_first_of(" ")+1,string::npos);
-    createArt(mh,parameters, ng_ID);
+    createArt(mh, ng_ID);
+    //createArt(mh, parameters, ng_ID);
   }catch(std::invalid_argument& e){
     createNg(mh,parameters);
   }
