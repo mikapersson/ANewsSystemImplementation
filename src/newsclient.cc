@@ -247,47 +247,6 @@ void createNg(MessageHandler& mh, string parameters){
   }
   mh.rec_cmd(); // ANS_END
 }
-// from main -> create -> createArt
-/* REMOVE WHEN PROGRAM IS WORKING
-void createArt(MessageHandler &mh, string parameters, int ng_ID){
-  unsigned q = 0;
-  for(char& c: parameters)
-    if(c == '"')
-      q++; // Make sure the argument contains 3 sentences
-
-  if(q != 6){
-    cout << "create ng_ID \"title\" \"author\" \"text\"\t- create article."
-              << std::endl;
-    return;
-  }
-  size_t p1,p2 = -1;
-  string art[3];
-
-  for(int i=0; i!=3;i++){
-    p1 = parameters.find('"',p2+1);
-    p2 = parameters.find('"',p1+1);
-    art[i] = parameters.substr(p1+1,p2-p1 -1);
-  }
-
-  mh.send_anscode(Protocol::COM_CREATE_ART);
-  mh.send_int_parameter(ng_ID);
-  for(auto& s: art)
-    mh.send_string_parameter(s);
-  mh.send_anscode(Protocol::COM_END);
-
-  mh.rec_cmd(); // ANS_CREATE_ART
-  Protocol p = mh.rec_cmd();
-
-  if(p == Protocol::ANS_NAK){
-    mh.rec_cmd(); // ERR_NG_DOES_NOT_EXIST
-    cout << "No newsgroup with ID:\t" << ng_ID << "."<< std::endl;
-  }else{
-    cout << "Article created." <<std::endl;
-  }
-
-  mh.rec_cmd(); // ANS_END
-
-}*/
 
 void createArt(MessageHandler &mh, int ng_ID){
   string title;
@@ -298,7 +257,7 @@ void createArt(MessageHandler &mh, int ng_ID){
   mh.send_anscode(Protocol::COM_CREATE_ART);
   mh.send_int_parameter(ng_ID);
   cout << "You are now creating an article, please provide the following:" << endl;
-  
+
   cout << "Title: ";
   std::getline(std::cin, title);
   mh.send_string_parameter(title);
@@ -344,7 +303,6 @@ void create(MessageHandler &mh, string parameters){
     int ng_ID = stoi(parameters); // if able to find a number, create art otherwise create ng
     parameters = parameters.substr(parameters.find_first_of(" ")+1,string::npos);
     createArt(mh, ng_ID);
-    //createArt(mh, parameters, ng_ID);
   }catch(std::invalid_argument& e){
     createNg(mh,parameters);
   }
